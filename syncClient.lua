@@ -1,1 +1,3 @@
-print("nothing")
+local args = { ... };
+
+print(args)
