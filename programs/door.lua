@@ -1,4 +1,4 @@
---$ARGS|Delay Open Delay|Redstone Output|Name|Channel|$ARGS
+--$ARGS|Delay|Open Delay|Close Delay|Redstone Output|Name|Channel|$ARGS
 
 -- Args
 local args = { ... }
