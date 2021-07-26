@@ -2,4 +2,4 @@ local args = { ... };
 
 print(textutils.serialize(args))
 
-// test
+this is a test
