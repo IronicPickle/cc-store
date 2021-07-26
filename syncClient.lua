@@ -1,3 +1,3 @@
 local args = { ... };
 
-print(args)
+print(textutils.serialize(args))
