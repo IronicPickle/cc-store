@@ -1,3 +1,5 @@
+--$ARGS| Delay (15) | Open Delay (3) | Redstone Output (right) | Name (Unnamed) | Channel (20) |$ARGS
+
 -- Args
 local args = { ... }
 local delay = tonumber(args[1]) or 15
