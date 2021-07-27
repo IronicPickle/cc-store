@@ -7,4 +7,4 @@ local PROGRAM_ARGS = ARGS[4];
 local DIR = ARGS[5];
 local PORT = ARGS[6];
 
-print(textutils.serialize(args))
+print(textutils.serialize(ARGS))
