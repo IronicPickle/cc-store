@@ -7,4 +7,9 @@ local PROGRAM_ARGS = ARGS[4];
 local DIR = ARGS[5];
 local PORT = ARGS[6];
 
-print(textutils.serialize(ARGS))
+print(REPO_FULL)
+print(GITHUB_ACCESS_TOKEN)
+print(PROGRAM)
+print(PROGRAM_ARGS)
+print(DIR)
+print(PORT)
