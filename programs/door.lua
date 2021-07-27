@@ -1,13 +1,13 @@
---$ARGS|Delay|Open Delay|Close Delay|Redstone Output|Name|Channel|$ARGS
+--$ARGS|Channel|Delay|Open Delay|Close Delay|Redstone Output|Name|$ARGS
 
 -- Args
 local args = { ... }
-local delay = tonumber(args[1]) or 15
-local openDelay = tonumber(args[2]) or 3
-local closeDelay = tonumber(args[3]) or 3
-local redstoneOutput = args[4] or "right"
-local name = args[5] or "Unnamed"
-local channel = tonumber(args[6]) or 20
+local channel = tonumber(args[1]) or 20
+local delay = tonumber(args[2]) or 15
+local openDelay = tonumber(args[3]) or 3
+local closeDelay = tonumber(args[4]) or 3
+local redstoneOutput = args[5] or "right"
+local name = args[6] or "Unnamed"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")

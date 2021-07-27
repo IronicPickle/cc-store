@@ -1,9 +1,11 @@
+--$ARGS|Channel|Floor Number|Floor Name|Redstone Output|$ARGS
+
 -- Args
 local args = { ... }
-local floorNum = tonumber(args[1]) or 1
-local floorName = args[2] or "Unnamed"
-local redstoneOutput = args[3] or "right"
-local channel = tonumber(args[4]) or 10
+local channel = tonumber(args[1]) or 10
+local floorNum = tonumber(args[2]) or 1
+local floorName = args[3] or "Unnamed"
+local redstoneOutput = args[4] or "right"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")

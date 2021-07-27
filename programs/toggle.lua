@@ -1,8 +1,10 @@
+--$ARGS|Channel|Redstone Output|Name|$ARGS
+
 -- Args
 local args = { ... }
-local redstoneOutput = args[1] or "right"
-local name = args[2] or "Unnamed"
-local channel = tonumber(args[3]) or 30
+local channel = tonumber(args[1]) or 30
+local redstoneOutput = args[2] or "right"
+local name = args[3] or "Unnamed"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
