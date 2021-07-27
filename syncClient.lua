@@ -13,3 +13,22 @@ print(GITHUB_ACCESS_TOKEN)
 print(DIR)
 print(PROGRAM)
 print(PROGRAM_ARGS)
+
+local function printConfig()
+    print(" > Configuration");
+    print("    - Channel: "..CHANNEL);
+    print("    - Full Repo URL: "..REPO_FULL);
+    print("    - GitHub Access Token: "..GITHUB_ACCESS_TOKEN);
+    print("    - Directory: "..DIR);
+    print("    - Program: "..PROGRAM..PROGRAM_ARGS);
+    print("");
+end;
+
+local function start()
+
+    print(" > Starting Sync Client...\n");
+    printConfig();
+    
+end;
+
+start();
