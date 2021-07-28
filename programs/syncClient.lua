@@ -10,6 +10,20 @@ local DEPS = {}
 local MODES = { "Programs", "Dependencies", "Update Servers", "Update All" }
 local MODE = 1
 
+local function printBreak()
+    local width = term.getSize()
+    local breakStr = ""
+    for i = 1, width - 2, 1 do
+        breakStr = breakStr.."-"
+    end
+    print(" "..breakStr.." ")
+end
+
+local function printInfo()
+    print(" > Controls: Tab - Switch | Up - Send")
+    print(" > Mode: "..MODES[MODE].."\n")
+end
+
 local function printSettings()
     print(" > Sync Client Settings")
     if MODE == 1 then
@@ -29,20 +43,6 @@ local function printSettings()
         print(" - N/A")
     end
     print("")
-end
-
-local function printBreak()
-    local width = term.getSize()
-    local breakStr = ""
-    for i = 1, width - 2, 1 do
-        breakStr = breakStr.."-"
-    end
-    print(" "..breakStr.." ")
-end
-
-local function printInfo()
-    print(" > Controls: Tab - Switch | Up - Send")
-    print(" > Mode: "..MODES[MODE].."\n")
 end
 
 local function printPrompt()
@@ -65,8 +65,8 @@ local function printAll()
     _, y = term.getSize()
     term.setCursorPos(1, y)
     printBreak()
-    printSettings()
     printInfo()
+    printSettings()
     printBreak()
     printPrompt()
 end
