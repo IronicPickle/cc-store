@@ -4,25 +4,27 @@
 local ARGS = { ... }
 local CHANNEL = tonumber(ARGS[1]) or 40100
 
-local PROGRAMS = { "program.lua" }
-local DEPS = { "dep.lua" }
+local PROGRAMS = {}
+local DEPS = {}
 
 local MODES = { "Programs", "Dependencies", "Update Servers", "Update All" }
 local MODE = 1
 
 local function printSettings()
     print(" > Sync Client Settings\n")
-    if MODE == 1 or MODE == 2 then
+    if MODE == 1 then
         print(" - Programs")
         for _,program in ipairs(PROGRAMS) do
             print("   - "..program)
         end
         print("")
+    elseif MODE == 2 then
         print(" - Dependencies")
         for _,dep in ipairs(DEPS) do
 
             print("   - "..dep)
         end
+        print("")
     else
         print(" - N/A")
     end
@@ -44,12 +46,12 @@ local function printPrompt()
     printBreak()
     print("")
     if MODE == 1 or MODE == 2 then
-        print(" > Send to update Programs and Dependencies")
+        print(" > Send to update "..MODES[MODE])
         print(" > Input list of "..MODES[MODE].." (comma seperated)")
     elseif MODE == 3 then
         print(" > Send to update all Sync Servers")
     elseif MODE == 4 then
-        print(" > Send to perform a system wide update of all files")
+        print(" > Send to perform a system wide update")
     end
 
     print("\n ->")
@@ -77,8 +79,9 @@ local function sendUpdate(modem)
         server = MODE == 3,
         all = MODE == 4,
     }
-    if MODE == 1 or MODE == 2 then
+    if MODE == 1 then
         data["programs"] = PROGRAMS
+    elseif MODE == 2 then
         data["deps"] = DEPS
     end
 
