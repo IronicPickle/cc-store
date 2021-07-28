@@ -56,12 +56,12 @@ end
 
 local function printPrompt()
     if MODE == 1 or MODE == 2 then
-        print(" > Send to update "..MODES[MODE])
-        print(" > Input list of "..MODES[MODE].." (comma seperated)")
+        print(" > Send > updates "..MODES[MODE])
+        print(" > Input list of "..MODES[MODE])
     elseif MODE == 3 then
-        print(" > Send to update all Sync Servers")
+        print(" > Send > Updates all Servers")
     elseif MODE == 4 then
-        print(" > Send to perform a system wide update")
+        print(" > Send > System-wide update")
     end
 
     print("\n ->")
