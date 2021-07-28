@@ -7,7 +7,7 @@ local CHANNEL = tonumber(ARGS[1]) or 40100
 local PROGRAMS = {}
 local DEPS = {}
 
-local MODES = { "Programs", "Dependencies", "Update Servers", "Update All" }
+local MODES = { "Programs", "Deps", "Update Servers", "Update All" }
 local MODE = 1
 
 local function printBreak()
@@ -56,12 +56,12 @@ end
 
 local function printPrompt()
     if MODE == 1 or MODE == 2 then
-        print(" > Send > updates "..MODES[MODE])
+        print(" > Updates "..MODES[MODE])
         print(" > Input list of "..MODES[MODE])
     elseif MODE == 3 then
-        print(" > Send > Updates all Servers")
+        print(" > Updates all servers")
     elseif MODE == 4 then
-        print(" > Send > System-wide update")
+        print(" > System-wide update")
     end
 
     print("\n ->")
