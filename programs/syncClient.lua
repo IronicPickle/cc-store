@@ -10,16 +10,6 @@ local DEPS = { "dep.lua" }
 local MODES = { "Programs", "Dependencies", "Update Servers", "Update All" }
 local MODE = 1
 
-local function readInput(prefix)
-    if prefix == nil then prefix = " ->" end
-    print(prefix)
-    _, y = term.getCursorPos()
-    term.setCursorPos(#prefix + 2, y - 1)
-    local input = read()
-    print("")
-    return input
-end
-
 local function printSettings()
     print(" > Sync Client Settings\n")
     if MODE == 1 or MODE == 2 then
@@ -54,13 +44,17 @@ local function printPrompt()
     printBreak()
     print("")
     if MODE == 1 or MODE == 2 then
-        print(" > Input a list of "..MODES[MODE].." to update (comma seperated)")
-        print("\n > Send to update Programs and Dependencies")
+        print(" > Send to update Programs and Dependencies")
+        print(" > Input list of "..MODES[MODE].." (comma seperated)")
     elseif MODE == 3 then
         print(" > Send to update all Sync Servers")
     elseif MODE == 4 then
         print(" > Send to perform a system wide update of all files")
     end
+
+    print("\n ->")
+    _, y = term.getCursorPos()
+    term.setCursorPos(4, y - 1)
 end
 
 local function printAll()
@@ -106,7 +100,7 @@ local function startInputReader()
 
     while true do
         printAll()
-        local input = readInput()
+        local input = read()
 
         if MODE == 1 then
             PROGRAMS = parseFileNames(input)
