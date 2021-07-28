@@ -24,15 +24,19 @@ end
 
 local function printSettings()
     print(" > Sync Client Settings\n")
-    print(" - Programs")
-    for _,program in ipairs(PROGRAMS) do
-        print("   - "..program)
-    end
-    print("")
-    print(" - Dependencies")
-    for _,dep in ipairs(DEPS) do
+    if MODE == 1 or MODE == 2 then
+        print(" - Programs")
+        for _,program in ipairs(PROGRAMS) do
+            print("   - "..program)
+        end
+        print("")
+        print(" - Dependencies")
+        for _,dep in ipairs(DEPS) do
 
-        print("   - "..dep)
+            print("   - "..dep)
+        end
+    else
+        print(" - N/A")
     end
     print("")
 end
@@ -91,7 +95,7 @@ local function startInputReader()
     local function parseFileNames(inputStr)
         local tab = {}
         for str in string.gmatch(inputStr, "([^,]+)") do
-            tab.insert(tab, str..".lua")
+            table.insert(tab, str..".lua")
         end
         return tab
     end
@@ -104,10 +108,6 @@ local function startInputReader()
             PROGRAMS = parseFileNames(input)
         elseif MODE == 2 then
             DEPS = parseFileNames(input)
-        elseif MODE == 3 then
-            UPDATE_SERVER = input == "true"
-        elseif MODE == 4 then
-            UPDATE_ALL = input == "true"
         end
     end
 
