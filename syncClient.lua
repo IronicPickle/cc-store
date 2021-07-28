@@ -60,6 +60,13 @@ local function getAndSave(repo_path, save_path)
     saveFile(content, save_path)
 end
 
+local function getAndSaveClient()
+    print("\n > Downloading sync client")
+    print("   - Downloading syncClient.lua from repo")
+    getAndSave("/syncClient.lua", DIR.."/syncClient.lua")
+    print(" - Sync Client download successful")
+end
+
 local function getAndSaveProgram()
     print("\n > Downloading program")
     print("   - Downloading "..PROGRAM.." from repo")
@@ -148,6 +155,7 @@ local function startListener()
                 print("\n <---> Recieved update signal")
                 local changedPrograms = body.programs
                 local changedDeps = body.deps
+                local clientChanged = body.client
                 getProgramDeps()
 
                 local changes = {}
@@ -156,7 +164,6 @@ local function startListener()
                     getAndSaveProgram()
                     getAndSaveDeps()
                     table.insert(changes, PROGRAM)
-                    print("\n <---> Updates downloaded")
                 elseif changedDeps ~= nil then
                     local relevantDeps = {}
                     for _,dep in ipairs(DEPS) do
@@ -169,10 +176,14 @@ local function startListener()
                     if #relevantDeps > 0 then
                         getAndSaveDeps()
                     end
-                    print("\n <---> Updates downloaded")
+                elseif clientChanged then
+                    getAndSaveClient()
+                    os.reboot()
                 end
 
-                if #changes == 0 then
+                if #changes > 0 then
+                    print("\n <---> Updates downloaded")
+                else
                     print("\n <---> No updates required")
                 end
             end
