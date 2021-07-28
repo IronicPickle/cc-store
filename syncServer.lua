@@ -110,7 +110,7 @@ local function getDeps(path, quiet)
             if not quiet then
                 print("   - Found "..str..".lua")
             end
-            getDeps("/lib/"..str..".lua")
+            getDeps("/lib/"..str..".lua", quiet)
         else
             if not quiet then
                 print("   - Already found "..str..".lua")
