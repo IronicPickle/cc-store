@@ -7,10 +7,20 @@ local CHANNEL = tonumber(ARGS[1]) or 40100
 local PROGRAMS = {"program.lua"}
 local DEPS = {"dep.lua"}
 
+local function readInput(prefix)
+    if prefix == nil then prefix = " ->" end
+    print(prefix)
+    _, y = term.getCursorPos()
+    term.setCursorPos(#prefix + 2, y - 1)
+    local input = read()
+    print("")
+    return input
+end
+
 local function printSettings()
     
     term.clear()
-    print(" > Settings")
+    print(" > Sync Client Settings\n")
     print(" - Programs")
     for _,program in ipairs(PROGRAMS) do
         print("  - "..program)
@@ -29,7 +39,7 @@ local function startInterface()
 
     printSettings()
 
-    read()
+    readInput()
 
 end
 
