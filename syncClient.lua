@@ -64,7 +64,7 @@ local function getAndSaveClient()
     print("\n > Downloading sync client")
     print("   - Downloading syncClient.lua from repo")
     getAndSave("/syncClient.lua", DIR.."/syncClient.lua")
-    print(" - Sync Client download successful")
+    print(" - Sync client download successful")
 end
 
 local function getAndSaveProgram()
@@ -176,15 +176,19 @@ local function startListener()
                     if #relevantDeps > 0 then
                         getAndSaveDeps()
                     end
-                elseif clientChanged then
-                    getAndSaveClient()
-                    os.reboot()
                 end
 
                 if #changes > 0 then
                     print("\n <---> Updates downloaded")
-                else
+                elseif not clientChanged then
                     print("\n <---> No updates required")
+                end
+
+                if clientChanged then
+                    getAndSaveClient()
+                    print("\n <---> Client updated, rebooting in 3...")
+                    os.sleep(3)
+                    os.reboot()
                 end
             end
         end
