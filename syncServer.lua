@@ -187,17 +187,17 @@ local function startListener()
                     end
                 end
 
-                if #changes > 0 then
-                    print("\n <---> Updates downloaded, restarting...")
-                    os.sleep(1)
-                    needsRestart = true
-                end
-
                 if serverChanged or updateAll then
                     getAndSaveServer()
                     print("\n <---> Server updated, rebooting in 5...")
                     os.sleep(5)
                     os.reboot()
+                end
+
+                if #changes > 0 then
+                    print("\n <---> Updates downloaded, restarting...")
+                    os.sleep(1)
+                    needsRestart = true
                 end
             end
         end
