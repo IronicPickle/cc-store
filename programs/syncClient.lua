@@ -71,15 +71,12 @@ end
 local function startEventReader()
 
     while true do
-        printAll()
 
         local event, key = os.pullEvent()
 
         if event == "key_up" then
             print(key)
         end
-
-        read()
 
     end
 
