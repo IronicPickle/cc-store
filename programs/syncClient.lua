@@ -20,7 +20,9 @@ local function printBreak()
 end
 
 local function printInfo()
+    term.setCursorPos(2, 1)
     print(" > Controls: Tab - Switch | Up - Send")
+    term.setCursorPos(2, 2)
     print(" > Mode: "..MODES[MODE].."\n")
 end
 
@@ -65,10 +67,10 @@ local function printAll()
     _, y = term.getSize()
     term.setCursorPos(1, y)
     printBreak()
-    printInfo()
     printSettings()
     printBreak()
     printPrompt()
+    printInfo()
 end
 
 local function nextMode()
