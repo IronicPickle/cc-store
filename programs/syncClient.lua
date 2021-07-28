@@ -17,12 +17,14 @@ local function printSettings()
         for _,program in ipairs(PROGRAMS) do
             print("   - "..program)
         end
+        if #PROGRAMS == 0 then print("   - None") end
     elseif MODE == 2 then
         print(" - Dependencies")
         for _,dep in ipairs(DEPS) do
 
             print("   - "..dep)
         end
+        if #DEPS == 0 then print("   - None") end
     else
         print(" - N/A")
     end
