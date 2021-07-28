@@ -86,8 +86,10 @@ local function sendUpdate(modem)
 
     data["type"] = "update"
 
+    print(data)
+
     modem.transmit(CHANNEL, CHANNEL, data)
-    printAll()
+    --printAll()
 end
 
 local function startInputReader()
