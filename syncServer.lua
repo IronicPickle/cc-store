@@ -183,7 +183,8 @@ local function startListener()
                 end
 
                 if #changes > 0 then
-                    print("\n <---> Updates downloaded")
+                    print("\n <---> Updates downloaded, restarting in...")
+                    os.sleep(1)
                     needsRestart = true
                 elseif not serverChanged then
                     print("\n <---> No updates required")
