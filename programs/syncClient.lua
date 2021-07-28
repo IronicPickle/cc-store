@@ -31,13 +31,17 @@ end
 local function printSettings()
     print(" > Sync Client Settings")
 
+    local _,height = term.getSize()
+    local remainingHeight = height - 14
+    print(remainingHeight)
+
     local function printFiles(files)
         for i,file in ipairs(files) do
-            if i > 4 and #files > 5 then break end
+            if i > remainingHeight - 1 and #files > remainingHeight then break end
             print("   | "..file)
         end
-        if #files > 5 then 
-            print("   | ... ("..tonumber(#files - 4)..")")
+        if #files > remainingHeight then 
+            print("   | ... ("..tonumber(#files - remainingHeight - 1)..")")
         end
         if #files == 0 then print("   | N/A") end
     end
@@ -71,14 +75,14 @@ end
 
 local function printAll()
     term.clear()
-    _, y = term.getSize()
-    term.setCursorPos(1, y)
+    _, height = term.getSize()
+    term.setCursorPos(1, height)
     printBreak()
     printSettings()
     printBreak()
     printPrompt()
     printInfo()
-    term.setCursorPos(5, y - 1)
+    term.setCursorPos(5, height - 1)
 end
 
 local function nextMode()
