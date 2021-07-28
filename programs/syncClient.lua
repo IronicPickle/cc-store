@@ -106,8 +106,8 @@ local function sendUpdate(modem)
     modem.transmit(CHANNEL, CHANNEL, data)
 
     local _,height = term.getSize()
-    term.setCursorPos(5, height)
-    print("Send Update!")
+    term.setCursorPos(5, height - 1)
+    print("Update Sent")
     sleep(1)
     printAll()
 end
