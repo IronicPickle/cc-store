@@ -14,8 +14,8 @@ local function printSettings()
         print("  - "..program)
     end
     print(" - Dependencies")
-    for program in PROGRAMS do
-        print("  - "..program)
+    for dep in DEPS do
+        print("  - "..dep)
     end
 end
 
