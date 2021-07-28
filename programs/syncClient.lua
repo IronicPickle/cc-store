@@ -26,6 +26,7 @@ local function startInterface()
 
     printSettings()
 
+    read()
 
 end
 
