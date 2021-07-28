@@ -20,7 +20,7 @@ local function printBreak()
 end
 
 local function printInfo()
-    term.setCursorPos(0, 1)
+    term.setCursorPos(1, 1)
     printBreak()
     term.setCursorPos(2, 2)
     print(" > Controls: Tab - Switch | Up - Send")
