@@ -33,7 +33,7 @@ local function printSettings()
 
     local _,height = term.getSize()
     local remainingHeight = height - 14
-    if MODE == 1 or MODE == 2 then
+    if MODE == 3 or MODE == 4 then
         remainingHeight = remainingHeight + 1
     end
 
