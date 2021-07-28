@@ -51,7 +51,6 @@ local function printSettings()
     else
         print(" - N/A")
     end
-    print("")
 end
 
 local function printPrompt()
@@ -64,7 +63,7 @@ local function printPrompt()
         print(" > Send to perform a system wide update")
     end
 
-    print("\n ->")
+    print(" ->")
     _, y = term.getCursorPos()
     term.setCursorPos(4, y - 1)
 end
