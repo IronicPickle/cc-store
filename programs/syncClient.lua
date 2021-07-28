@@ -30,19 +30,24 @@ end
 
 local function printSettings()
     print(" > Sync Client Settings")
+
+    local function printFiles(files)
+        for i,file in ipairs(files) do
+            if i > 5 then
+                print("   | ...")
+                break
+            end
+            print("   | "..file)
+        end
+        if #files == 0 then print("   | N/A") end
+    end
+
     if MODE == 1 then
         print(" - Programs")
-        for _,program in ipairs(PROGRAMS) do
-            print("   | "..program)
-        end
-        if #PROGRAMS == 0 then print("   | N/A") end
+        printFiles(PROGRAMS)
     elseif MODE == 2 then
         print(" - Dependencies")
-        for _,dep in ipairs(DEPS) do
-
-            print("   | "..dep)
-        end
-        if #DEPS == 0 then print("   | N/A") end
+        printFiles(DEPS)
     else
         print(" - N/A")
     end
