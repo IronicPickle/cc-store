@@ -166,7 +166,7 @@ local function startListener()
                     getAndSaveProgram()
                     getAndSaveDeps()
                     table.insert(changes, PROGRAM)
-                elseif changedDeps ~= nil or updateAll then
+                elseif changedDeps ~= nil then
                     local relevantDeps = {}
                     for _,dep in ipairs(DEPS) do
                         if tableHasValue(changedDeps, dep) then
@@ -175,7 +175,7 @@ local function startListener()
                         end
                     end
 
-                    if #relevantDeps > 0 or updateAll then
+                    if #relevantDeps > 0 then
                         getAndSaveDeps()
                     end
                 end
