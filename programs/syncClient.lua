@@ -33,7 +33,7 @@ local function printSettings()
 
     local function printFiles(files)
         for i,file in ipairs(files) do
-            if i > 5 then
+            if i > 4 then
                 print("   | ...")
                 break
             end
@@ -51,6 +51,7 @@ local function printSettings()
     else
         print(" - N/A")
     end
+    print("")
 end
 
 local function printPrompt()
@@ -63,7 +64,7 @@ local function printPrompt()
         print(" > Send to perform a system wide update")
     end
 
-    print(" ->")
+    print("\n ->")
     _, y = term.getCursorPos()
     term.setCursorPos(4, y - 1)
 end
