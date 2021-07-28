@@ -4,12 +4,12 @@
 local ARGS = { ... }
 local CHANNEL = tonumber(ARGS[1]) or 40100
 
-local PROGRAMS = {"program.lua"}
-local DEPS = {"dep.lua"}
+local PROGRAMS = { "program.lua" }
+local DEPS = { "dep.lua" }
 local UPDATE_SERVER = false
 local UPDATE_ALL = false
 
-local MODES = { "Programs", "Deps", "All", "Server" }
+local MODES = { "Programs", "Deps", "Server", "All" }
 local MODE = 1
 
 local function readInput(prefix)
@@ -48,7 +48,7 @@ end
 
 local function printPrompt()
     print("\n > Controls - Tab: Switch | Up Arrow: Send")
-    print("\n > Mode: "..MODES[MODE])
+    print("\n > Mode: "..MODES[MODE].."\n")
     printBreak()
 
 end
@@ -65,27 +65,50 @@ end
 local function nextMode()
     MODE = MODE + 1
     if MODE > #MODES then MODE = 1 end
+    UPDATE_SERVER = MODE == 3
+    UPDATE_ALL = MODE == 4
+    printAll()
 end
 
 local function sendUpdate(modem)
-    modem.transmit(CHANNEL, CHANNEL, {
-        type = "update",
-        {
-            programs = PROGRAMS,
-            deps = DEPS,
-            server = UPDATE_SERVER,
-            all = UPDATE_ALL
-        }
-    })
-end
+    local data = {
+        server = MODE == 3,
+        all = MODE == 4,
+    }
+    if MODE == 1 or MODE == 2 then
+        data["programs"] = PROGRAMS
+        data["deps"] = DEPS
+    end
 
+    data["type"] = "update"
+
+    modem.transmit(CHANNEL, CHANNEL, data)
+    printAll()
+end
 
 local function startInputReader()
 
+    local function parseFileNames(inputStr)
+        local tab = {}
+        for str in string.gmatch(inputStr, "([^,]+)") do
+            tab.insert(tab, str..".lua")
+        end
+        return tab
+    end
+
     while true do
         printAll()
+        local input = readInput()
 
-        readInput()
+        if MODE == 1 then
+            PROGRAMS = parseFileNames(input)
+        elseif MODE == 2 then
+            DEPS = parseFileNames(input)
+        elseif MODE == 3 then
+            UPDATE_SERVER = input == "true"
+        elseif MODE == 4 then
+            UPDATE_ALL = input == "true"
+        end
     end
 
 end
@@ -96,8 +119,6 @@ local function startEventReader()
     modem.open(CHANNEL)
 
     while true do
-        printAll()
-
         local event, key = os.pullEvent()
 
         if event == "key_up" then
