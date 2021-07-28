@@ -33,6 +33,9 @@ local function printSettings()
 
     local _,height = term.getSize()
     local remainingHeight = height - 14
+    if MODE == 1 or MODE == 2 then
+        remainingHeight = remainingHeight + 1
+    end
 
     local function printFiles(files)
         for i,file in ipairs(files) do
