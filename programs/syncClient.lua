@@ -23,7 +23,7 @@ local function printInfo()
     term.setCursorPos(1, 1)
     printBreak()
     term.setCursorPos(1, 2)
-    print(" > Controls: Tab - Switch | Up - Send")
+    print(" > Tab: Switch | Up: Send")
     term.setCursorPos(1, 3)
     print(" > Mode: "..MODES[MODE].."\n")
 end
