@@ -35,7 +35,7 @@ end
 local function printBreak()
     local width = term.getSize()
     local breakStr = ""
-    for i = 1, i < width - 2, i+1 do
+    for i = 1, width - 2, 1 do
         breakStr = breakStr.."-"
     end
     print(" "..breakStr.." ")
