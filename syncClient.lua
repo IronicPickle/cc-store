@@ -186,8 +186,8 @@ local function startListener()
 
                 if clientChanged then
                     getAndSaveClient()
-                    print("\n <---> Client updated, rebooting in 3...")
-                    os.sleep(3)
+                    print("\n <---> Client updated, rebooting in 5...")
+                    os.sleep(5)
                     os.reboot()
                 end
             end
