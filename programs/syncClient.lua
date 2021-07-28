@@ -43,12 +43,13 @@ end
 
 local function printPrompt()
     print(" > Controls")
+    print(" - Tab: Switch | Enter: Send")
 end
 
 local function printAll()
     term.clear()
     _, y = term.getSize()
-    term.setCursorPos(0, y)
+    term.setCursorPos(1, y)
     printSettings()
     printBreak()
     printPrompt()
@@ -77,6 +78,8 @@ local function startEventReader()
         if event == "key_up" then
             print(key)
         end
+
+        read()
 
     end
 
