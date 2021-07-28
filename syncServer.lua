@@ -60,11 +60,11 @@ local function getAndSave(repo_path, save_path)
     saveFile(content, save_path)
 end
 
-local function getAndSaveClient()
-    print("\n > Downloading sync client")
-    print("   - Downloading syncClient.lua from repo")
-    getAndSave("/syncClient.lua", DIR.."/syncClient.lua")
-    print(" - Sync client download successful")
+local function getAndSaveServer()
+    print("\n > Downloading sync server")
+    print("   - Downloading syncServer.lua from repo")
+    getAndSave("/syncServer.lua", DIR.."/syncServer.lua")
+    print(" - Sync server download successful")
 end
 
 local function getAndSaveProgram()
@@ -155,7 +155,7 @@ local function startListener()
                 print("\n <---> Recieved update signal")
                 local changedPrograms = body.programs
                 local changedDeps = body.deps
-                local clientChanged = body.client
+                local serverChanged = body.server
                 getProgramDeps()
 
                 local changes = {}
@@ -180,13 +180,13 @@ local function startListener()
 
                 if #changes > 0 then
                     print("\n <---> Updates downloaded")
-                elseif not clientChanged then
+                elseif not serverChanged then
                     print("\n <---> No updates required")
                 end
 
-                if clientChanged then
-                    getAndSaveClient()
-                    print("\n <---> Client updated, rebooting in 5...")
+                if serverChanged then
+                    getAndSaveServer()
+                    print("\n <---> Server updated, rebooting in 5...")
                     os.sleep(5)
                     os.reboot()
                 end
@@ -203,7 +203,7 @@ end
 
 local function start()
 
-    print(" > Starting Sync Client")
+    print(" > Starting Sync Server")
 
     if isFirstRun() then
         runFirstTimeSetup()
