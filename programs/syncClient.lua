@@ -21,12 +21,12 @@ local function printSettings()
     
     term.clear()
     print(" > Sync Client Settings\n")
-    print(" - Programs\n")
+    print(" - Programs")
     for _,program in ipairs(PROGRAMS) do
         print("   - "..program)
     end
     print("")
-    print(" - Dependencies\n")
+    print(" - Dependencies")
     for _,dep in ipairs(DEPS) do
 
         print("   - "..dep)
@@ -43,23 +43,54 @@ local function printBreak()
     print(" "..breakStr.." ")
 end
 
-local function startInterface()
+local function printPrompt()
+    print(" > Controls")
+end
+
+local function printAll()
+    term.clear()
+    printSettings()
+    printBreak()
+    printPrompt()
+end
+
+local function startInputReader()
     local modem = peripheral.find("modem")
     if modem == nil then error("Could not start client, no modem present") end
     modem.open(CHANNEL)
 
-    printSettings()
-    printBreak()
+    while true do
+        printAll()
 
-    readInput()
+        readInput()
+    end
 
+end
+
+local function startEventReader()
+
+    while true do
+        printAll()
+
+        local event, key = os.pullEvent()
+
+        if event == "key_up" then
+            print(key)
+        end
+
+    end
+
+end
+
+local function startThreads()
+    parallel.waitForAny(startInputReader, startEventReader)
 end
 
 local function start()
 
     print(" > Starting Sync Client")
 
-    startInterface();
+    startThreads();
   
 end
 
