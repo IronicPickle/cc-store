@@ -6,8 +6,6 @@ local CHANNEL = tonumber(ARGS[1]) or 40100
 
 local PROGRAMS = { "program.lua" }
 local DEPS = { "dep.lua" }
-local UPDATE_SERVER = false
-local UPDATE_ALL = false
 
 local MODES = { "Programs", "Deps", "Server", "All" }
 local MODE = 1
@@ -69,8 +67,6 @@ end
 local function nextMode()
     MODE = MODE + 1
     if MODE > #MODES then MODE = 1 end
-    UPDATE_SERVER = MODE == 3
-    UPDATE_ALL = MODE == 4
     printAll()
 end
 
@@ -124,6 +120,7 @@ local function startEventReader()
         local event, key = os.pullEvent()
 
         if event == "key_up" then
+            print(key)
             if key == 258 then -- Tab
                 nextMode()
             elseif key == 259 then -- Up Arrow
