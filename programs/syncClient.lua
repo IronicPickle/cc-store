@@ -123,7 +123,7 @@ local function startEventReader()
             print(key)
             if key == 258 then -- Tab
                 nextMode()
-            elseif key == 259 then -- Up Arrow
+            elseif key == 265 then -- Up Arrow
                 sendUpdate(modem)
             end
         end
