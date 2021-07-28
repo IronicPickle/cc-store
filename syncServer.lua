@@ -188,7 +188,7 @@ local function startListener()
                 end
 
                 if #changes > 0 then
-                    print("\n <---> Updates downloaded, restarting in...")
+                    print("\n <---> Updates downloaded, restarting...")
                     os.sleep(1)
                     needsRestart = true
                 end
