@@ -91,7 +91,7 @@ local function tableHasValue(tab, value)
     return false
 end
 
-local function getDeps(path)
+local function getDeps(path, quiet)
     local content = getFileFromRepo(path)
 
     local matches = content:gmatch('require%(.'..DIR..'/lib/(.-).%)')
@@ -107,21 +107,25 @@ local function getDeps(path)
     for str in matches do
         local success = insertDep(str..".lua")
         if success then
-            print("   - Found "..str..".lua")
+            if not quiet then
+                print("   - Found "..str..".lua")
+            end
             getDeps("/lib/"..str..".lua")
         else
-            print("   - Already found "..str..".lua")
+            if not quiet then
+                print("   - Already found "..str..".lua")
+            end
         end
     end
     
     return deps
 end
 
-local function getProgramDeps()
-    print("\n > Gathering Dependencies")
+local function getProgramDeps(quiet)
+    if not quiet then print("\n > Gathering Dependencies") end
     DEPS = {}
-    getDeps("/programs/"..PROGRAM)
-    print(" - Found "..#DEPS.." dependencies")
+    getDeps("/programs/"..PROGRAM, quiet)
+    if not quiet then print(" - Found "..#DEPS.." dependencies")end
 end
 
 local function isFirstRun()
@@ -155,20 +159,21 @@ local function startListener()
 
         if event == "modem_message" then
             if body.type == "update" then
-                print("\n <---> Recieved update signal")
                 local changedPrograms = body.programs
                 local changedDeps = body.deps
                 local serverChanged = body.server
                 local updateAll = body.all;
-                getProgramDeps()
+                getProgramDeps(true)
 
                 local changes = {}
 
                 if (changedPrograms ~= nil and tableHasValue(changedPrograms, PROGRAM)) or updateAll then
+                    print("\n <---> Recieved update signal")
                     getAndSaveProgram()
                     getAndSaveDeps()
                     table.insert(changes, PROGRAM)
                 elseif changedDeps ~= nil then
+                    print("\n <---> Recieved update signal")
                     local relevantDeps = {}
                     for _,dep in ipairs(DEPS) do
                         if tableHasValue(changedDeps, dep) then
@@ -186,8 +191,6 @@ local function startListener()
                     print("\n <---> Updates downloaded, restarting in...")
                     os.sleep(1)
                     needsRestart = true
-                elseif not serverChanged then
-                    print("\n <---> No updates required")
                 end
 
                 if serverChanged or updateAll then
