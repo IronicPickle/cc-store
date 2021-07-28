@@ -10,11 +10,11 @@ local DEPS = {"dep.lua"}
 local function printSettings()
     print(" > Settings")
     print(" - Programs")
-    for program in PROGRAMS do
+    for _,program in ipairs(PROGRAMS) do
         print("  - "..program)
     end
     print(" - Dependencies")
-    for dep in DEPS do
+    for _,dep in ipairs(DEPS) do
         print("  - "..dep)
     end
 end
