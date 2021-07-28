@@ -47,9 +47,9 @@ local function startInterface()
     modem.open(CHANNEL)
 
     printSettings()
+    printBreak()
 
     readInput()
-    printBreak()
 
 end
 
