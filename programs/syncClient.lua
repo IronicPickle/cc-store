@@ -11,20 +11,20 @@ local MODES = { "Programs", "Dependencies", "Update Servers", "Update All" }
 local MODE = 1
 
 local function printSettings()
-    print(" > Sync Client Settings\n")
+    print(" > Sync Client Settings")
     if MODE == 1 then
         print(" - Programs")
         for _,program in ipairs(PROGRAMS) do
-            print("   - "..program)
+            print("   | "..program)
         end
-        if #PROGRAMS == 0 then print("   - None") end
+        if #PROGRAMS == 0 then print("   | N/A") end
     elseif MODE == 2 then
         print(" - Dependencies")
         for _,dep in ipairs(DEPS) do
 
-            print("   - "..dep)
+            print("   | "..dep)
         end
-        if #DEPS == 0 then print("   - None") end
+        if #DEPS == 0 then print("   | N/A") end
     else
         print(" - N/A")
     end
@@ -41,7 +41,7 @@ local function printBreak()
 end
 
 local function printInfo()
-    print(" > Controls - Tab: Switch | Up Arrow: Send")
+    print(" > Controls: Tab - Switch | Up - Send")
     print(" > Mode: "..MODES[MODE].."\n")
 end
 
@@ -66,7 +66,6 @@ local function printAll()
     term.setCursorPos(1, y)
     printBreak()
     printSettings()
-    printBreak()
     printInfo()
     printBreak()
     printPrompt()
