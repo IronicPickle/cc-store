@@ -18,8 +18,6 @@ local function readInput(prefix)
 end
 
 local function printSettings()
-    
-    term.clear()
     print(" > Sync Client Settings\n")
     print(" - Programs")
     for _,program in ipairs(PROGRAMS) do
@@ -49,6 +47,8 @@ end
 
 local function printAll()
     term.clear()
+    _, y = term.getSize()
+    term.setCursorPos(0, y)
     printSettings()
     printBreak()
     printPrompt()
