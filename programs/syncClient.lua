@@ -73,7 +73,7 @@ local function printAll()
     printBreak()
     printPrompt()
     printInfo()
-    term.setCursorPos(4, y - 1)
+    term.setCursorPos(5, y - 1)
 end
 
 local function nextMode()
