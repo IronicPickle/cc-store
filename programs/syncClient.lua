@@ -7,7 +7,7 @@ local CHANNEL = tonumber(ARGS[1]) or 40100
 local PROGRAMS = { "program.lua" }
 local DEPS = { "dep.lua" }
 
-local MODES = { "Programs", "Deps", "Server", "All" }
+local MODES = { "Programs", "Dependencies", "Update Servers", "Update All" }
 local MODE = 1
 
 local function readInput(prefix)
@@ -52,7 +52,15 @@ local function printPrompt()
     print("\n > Controls - Tab: Switch | Up Arrow: Send")
     print("\n > Mode: "..MODES[MODE].."\n")
     printBreak()
-
+    print("")
+    if MODE == 1 or MODE == 2 then
+        print(" > Input a list of "..MODES[MODE].." to update (comma seperated)")
+        print("\n > Send to update Programs and Dependencies")
+    elseif MODE == 3 then
+        print(" > Send to update all Sync Servers")
+    elseif MODE == 4 then
+        print(" > Send to perform a system wide update of all files")
+    end
 end
 
 local function printAll()
