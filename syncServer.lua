@@ -175,7 +175,7 @@ local function startListener()
                         end
                     end
 
-                    if #relevantDeps > 0 then
+                    if #relevantDeps > 0 or updateAll then
                         getAndSaveDeps()
                     end
                 end
