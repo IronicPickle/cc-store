@@ -15,6 +15,7 @@ local function printSettings()
     end
     print(" - Dependencies")
     for _,dep in ipairs(DEPS) do
+
         print("  - "..dep)
     end
 end
@@ -31,6 +32,8 @@ local function startInterface()
 end
 
 local function start()
+
+    term.clear()
 
     print(" > Starting Sync Client")
 
