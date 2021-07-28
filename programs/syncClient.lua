@@ -8,6 +8,8 @@ local PROGRAMS = {"program.lua"}
 local DEPS = {"dep.lua"}
 
 local function printSettings()
+    
+    term.clear()
     print(" > Settings")
     print(" - Programs")
     for _,program in ipairs(PROGRAMS) do
@@ -32,8 +34,6 @@ local function startInterface()
 end
 
 local function start()
-
-    term.clear()
 
     print(" > Starting Sync Client")
 
