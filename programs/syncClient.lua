@@ -38,11 +38,12 @@ local function printBreak()
     print(" "..breakStr.." ")
 end
 
+local function printInfo()
+    print(" > Controls - Tab: Switch | Up Arrow: Send")
+    print(" > Mode: "..MODES[MODE].."\n")
+end
+
 local function printPrompt()
-    print("\n > Controls - Tab: Switch | Up Arrow: Send")
-    print("\n > Mode: "..MODES[MODE].."\n")
-    printBreak()
-    print("")
     if MODE == 1 or MODE == 2 then
         print(" > Send to update "..MODES[MODE])
         print(" > Input list of "..MODES[MODE].." (comma seperated)")
@@ -61,7 +62,10 @@ local function printAll()
     term.clear()
     _, y = term.getSize()
     term.setCursorPos(1, y)
+    printBreak()
     printSettings()
+    printBreak()
+    printInfo()
     printBreak()
     printPrompt()
 end
