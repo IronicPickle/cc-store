@@ -82,10 +82,8 @@ local function sendUpdate(modem)
 
     data["type"] = "update"
 
-    print(data)
-
     modem.transmit(CHANNEL, CHANNEL, data)
-    --printAll()
+    printAll()
 end
 
 local function startInputReader()
@@ -120,7 +118,6 @@ local function startEventReader()
         local event, key = os.pullEvent()
 
         if event == "key_up" then
-            print(key)
             if key == 258 then -- Tab
                 nextMode()
             elseif key == 265 then -- Up Arrow
