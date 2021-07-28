@@ -156,15 +156,16 @@ local function startListener()
                 local changedPrograms = body.programs
                 local changedDeps = body.deps
                 local serverChanged = body.server
+                local updateAll = body.all;
                 getProgramDeps()
 
                 local changes = {}
 
-                if changedPrograms ~= nil and tableHasValue(changedPrograms, PROGRAM) then
+                if (changedPrograms ~= nil and tableHasValue(changedPrograms, PROGRAM)) or updateAll then
                     getAndSaveProgram()
                     getAndSaveDeps()
                     table.insert(changes, PROGRAM)
-                elseif changedDeps ~= nil then
+                elseif changedDeps ~= nil or updateAll then
                     local relevantDeps = {}
                     for _,dep in ipairs(DEPS) do
                         if tableHasValue(changedDeps, dep) then
@@ -184,7 +185,7 @@ local function startListener()
                     print("\n <---> No updates required")
                 end
 
-                if serverChanged then
+                if serverChanged or updateAll then
                     getAndSaveServer()
                     print("\n <---> Server updated, rebooting in 5...")
                     os.sleep(5)
