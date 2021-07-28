@@ -33,10 +33,10 @@ local function printSettings()
 
     local function printFiles(files)
         for i,file in ipairs(files) do
-            if i > 4 then break end
+            if i > 4 and #files > 5 then break end
             print("   | "..file)
         end
-        if #files > 4 then 
+        if #files > 5 then 
             print("   | ... ("..tonumber(#files - 4)..")")
         end
         if #files == 0 then print("   | N/A") end
