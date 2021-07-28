@@ -6,6 +6,7 @@ local GITHUB_ACCESS_TOKEN = ARGS[3]
 local DIR = ARGS[4]
 local PROGRAM = ARGS[5]
 local PROGRAM_ARGS = ARGS[6]
+local DO_SETUP = ARGS[7] or false
 
 local DEPS = {}
 
@@ -206,7 +207,7 @@ local function start()
 
     print(" > Starting Sync Server")
 
-    if isFirstRun() then
+    if isFirstRun() or DO_SETUP then
         runFirstTimeSetup()
     end
 
