@@ -148,7 +148,9 @@ local function startListener()
     if modem == nil then error("Could not start listener, no modem present") end
     modem.open(CHANNEL)
 
-    while(true) do
+    local needsRestart = false
+
+    while not needsRestart do
         local event, _, _, _, body = os.pullEvent()
 
         if event == "modem_message" then
@@ -182,6 +184,7 @@ local function startListener()
 
                 if #changes > 0 then
                     print("\n <---> Updates downloaded")
+                    needsRestart = true
                 elseif not serverChanged then
                     print("\n <---> No updates required")
                 end
@@ -200,7 +203,9 @@ end
 
 local function startThreads()
     term.clear();
-    parallel.waitForAny(startListener, startProgram)
+    while true do  
+        parallel.waitForAny(startListener, startProgram)
+    end
 end
 
 local function start()
