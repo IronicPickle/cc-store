@@ -40,7 +40,7 @@ local function printSettings()
             print("   | "..file)
         end
         if #files > remainingHeight then 
-            print("   | ... ("..tonumber(#files - remainingHeight - 1)..")")
+            print("   | ... ("..tonumber(#files - remainingHeight)..")")
         end
         if #files == 0 then print("   | N/A") end
     end
