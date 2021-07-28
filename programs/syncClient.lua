@@ -23,13 +23,22 @@ local function printSettings()
     print(" > Sync Client Settings\n")
     print(" - Programs")
     for _,program in ipairs(PROGRAMS) do
-        print("  - "..program)
+        print("   - "..program)
     end
     print(" - Dependencies")
     for _,dep in ipairs(DEPS) do
 
-        print("  - "..dep)
+        print("   - "..dep)
     end
+end
+
+local function printBreak()
+    local width = term.getSize()
+    local breakStr = ""
+    for i = 1, i < width - 2, i+1 do
+        breakStr = breakStr.."-"
+    end
+    print(" "..breakStr.." ")
 end
 
 local function startInterface()
@@ -40,6 +49,7 @@ local function startInterface()
     printSettings()
 
     readInput()
+    printBreak()
 
 end
 
