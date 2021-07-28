@@ -32,7 +32,7 @@ local function printSettings()
     print(" > Sync Client Settings")
 
     local _,height = term.getSize()
-    local remainingHeight = height - 13
+    local remainingHeight = height - 15
 
     local function printFiles(files)
         for i,file in ipairs(files) do
