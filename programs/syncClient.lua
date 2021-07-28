@@ -21,15 +21,17 @@ local function printSettings()
     
     term.clear()
     print(" > Sync Client Settings\n")
-    print(" - Programs")
+    print(" - Programs\n")
     for _,program in ipairs(PROGRAMS) do
         print("   - "..program)
     end
-    print(" - Dependencies")
+    print("")
+    print(" - Dependencies\n")
     for _,dep in ipairs(DEPS) do
 
         print("   - "..dep)
     end
+    print("")
 end
 
 local function printBreak()
