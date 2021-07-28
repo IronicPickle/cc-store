@@ -6,6 +6,11 @@ local CHANNEL = tonumber(ARGS[1]) or 40100
 
 local PROGRAMS = {"program.lua"}
 local DEPS = {"dep.lua"}
+local UPDATE_SERVER = false
+local UPDATE_ALL = false
+
+local MODES = { "Programs", "Deps", "All", "Server" }
+local MODE = 1
 
 local function readInput(prefix)
     if prefix == nil then prefix = " ->" end
@@ -42,8 +47,10 @@ local function printBreak()
 end
 
 local function printPrompt()
-    print(" > Controls")
-    print(" - Tab: Switch | Enter: Send")
+    print("\n > Controls - Tab: Switch | Up Arrow: Send")
+    print("\n > Mode: "..MODES[MODE])
+    printBreak()
+
 end
 
 local function printAll()
@@ -55,10 +62,25 @@ local function printAll()
     printPrompt()
 end
 
+local function nextMode()
+    MODE = MODE + 1
+    if MODE > #MODES then MODE = 1 end
+end
+
+local function sendUpdate(modem)
+    modem.transmit(CHANNEL, CHANNEL, {
+        type = "update",
+        {
+            programs = PROGRAMS,
+            deps = DEPS,
+            server = UPDATE_SERVER,
+            all = UPDATE_ALL
+        }
+    })
+end
+
+
 local function startInputReader()
-    local modem = peripheral.find("modem")
-    if modem == nil then error("Could not start client, no modem present") end
-    modem.open(CHANNEL)
 
     while true do
         printAll()
@@ -69,13 +91,21 @@ local function startInputReader()
 end
 
 local function startEventReader()
+    local modem = peripheral.find("modem")
+    if modem == nil then error("Could not start client, no modem present") end
+    modem.open(CHANNEL)
 
     while true do
+        printAll()
 
         local event, key = os.pullEvent()
 
         if event == "key_up" then
-            print(key)
+            if key == 258 then -- Tab
+                nextMode()
+            elseif key == 259 then -- Up Arrow
+                sendUpdate(modem)
+            end
         end
 
     end
