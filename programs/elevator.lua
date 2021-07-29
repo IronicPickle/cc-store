@@ -5,8 +5,9 @@ local args = { ... }
 local channel = tonumber(args[1]) or 10
 local floorNum = tonumber(args[2]) or 1
 local floorName = args[3] or "Unnamed"
-local redstoneOutput = args[4] or "right"
+local bundledRedstoneOutput = args[4] or "right"
 local directionRedstoneOutput = args[5] or "left"
+local movingRedstoneOutput = args[6] or "back"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
@@ -151,10 +152,14 @@ function sendSignal(floorNum)
     if(moving) then colorDecimal = colorDecimal + 32768 end
     
     redstone.setBundledOutput(
-        redstoneOutput, colorDecimal
+        bundledRedstoneOutput, colorDecimal
     )
-    print(directionRedstoneOutput, moving, direction > 0)
-    redstone.setOutput(directionRedstoneOutput, moving and direction > 0)
+    redstone.setOutput(
+        directionRedstoneOutput, direction > 0
+    )
+    redstone.setOutput(
+        movingRedstoneOutput, moving
+    )
     
 end
 
