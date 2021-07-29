@@ -7,7 +7,7 @@ local floorNum = tonumber(args[2]) or 1
 local floorName = args[3] or "Unnamed"
 local bundledRedstoneOutput = args[4] or "right"
 local directionRedstoneOutput = args[5] or "left"
-local movingRedstoneOutput = args[6] or "back"
+local movingRedstoneOutput = args[6] or "front"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
