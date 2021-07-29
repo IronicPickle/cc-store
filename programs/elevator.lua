@@ -1,4 +1,4 @@
---$ARGS|Channel|Floor Number|Floor Name|Redstone Output|$ARGS
+--$ARGS|Channel|Floor Number|Floor Name|Bundled Redstone Output|Direction Redstone Output|$ARGS
 
 -- Args
 local args = { ... }
@@ -6,6 +6,7 @@ local channel = tonumber(args[1]) or 10
 local floorNum = tonumber(args[2]) or 1
 local floorName = args[3] or "Unnamed"
 local redstoneOutput = args[4] or "right"
+local directionRedstoneOutput = args[5] or "left"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
@@ -152,6 +153,8 @@ function sendSignal(floorNum)
     redstone.setBundledOutput(
         redstoneOutput, colorDecimal
     )
+
+    redstone.setOutput(directionRedstoneOutput, moving)
     
 end
 
