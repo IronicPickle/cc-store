@@ -153,7 +153,7 @@ function sendSignal(floorNum)
     redstone.setBundledOutput(
         redstoneOutput, colorDecimal
     )
-
+    print(directionRedstoneOutput, moving, direction > 0)
     redstone.setOutput(directionRedstoneOutput, moving and direction > 0)
     
 end
