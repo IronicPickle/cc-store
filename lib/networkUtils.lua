@@ -33,7 +33,6 @@ function M.joinOrCreate(channel, device, onChange)
   end
   
   local function attemptJoinNetwork()
-
     local function join()
       print(" > Attempting to join network on "..channel)
       modem.transmit(channel, channel,
@@ -56,12 +55,11 @@ function M.joinOrCreate(channel, device, onChange)
 
     parallel.waitForAny(join,
       function()
-        print(" > No network fonund, assuming host... ")
         os.sleep(5)
+        print(" > No network fonund, assuming host... ")
         isHost = true
       end
     )
-
   end
 
   modem.open(channel)
@@ -71,7 +69,6 @@ function M.joinOrCreate(channel, device, onChange)
     devices = { device }
     onChange(devices)
   end
-
   startListener()
 
   return isHost
