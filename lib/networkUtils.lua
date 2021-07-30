@@ -77,3 +77,5 @@ function M.joinOrCreate(channel, device, onChange)
   return isHost
 
 end
+
+return M
