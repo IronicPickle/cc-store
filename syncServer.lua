@@ -211,7 +211,7 @@ local function startThreads()
     term.clear();
     while not crashed do 
         parallel.waitForAny(startListener, startProgram)
-        sleep(0.25)
+        sleep(0.5)
     end
     print("<---> Crash detected, not restarting...")
 end
