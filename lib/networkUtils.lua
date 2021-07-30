@@ -59,6 +59,7 @@ function M.joinOrCreate(channel, device, onChange)
           if body.type == "network/join-res" then
             devices = body.devices
             onChange(devices)
+            break
           end
         end
       end
