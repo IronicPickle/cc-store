@@ -10,7 +10,6 @@ function M.joinOrCreate(channel, device, onChange)
   local function startListener()
     while true do
       local event, _, _, _, body = os.pullEvent()
-      print(textutils.serialiseJSON(body))
 
       if event == "modem_message" then
         if isHost then
@@ -33,7 +32,6 @@ function M.joinOrCreate(channel, device, onChange)
           end
         end
       end
-
     end
   end
   
@@ -51,12 +49,13 @@ function M.joinOrCreate(channel, device, onChange)
         }
       )
 
-      print(" > Awaiting join response ")
+      print(" > Awaiting join response")
 
       while true do
         local event, _, _, _, body = os.pullEvent()
         if event == "modem_message" then
           if body.type == "network/join-res" then
+            print(" > Network joined")
             devices = body.devices
             onChange(devices)
             break
