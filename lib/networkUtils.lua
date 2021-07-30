@@ -16,6 +16,10 @@ function M.joinOrCreate(channel, device, onChange)
           if body.type == "/network/join" then
             table.insert(devices, body.device)
             modem.transmit(channel, channel, {
+              type = "network/join-res",
+              devices = devices
+            })
+            modem.transmit(channel, channel, {
               type = "network/update",
               devices = devices
             })
