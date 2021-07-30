@@ -225,7 +225,9 @@ local function start()
         runFirstTimeSetup()
     end
 
-    startThreads();
+    while true do
+        startThreads();
+    end
     
 end
 
