@@ -1,4 +1,4 @@
---$ARGS|Channel|Floor Number|Floor Name|Bundled Redstone Output|Direction Redstone Output|$ARGS
+--$ARGS|Channel|Floor Number|Floor Name|Bundled Redstone Output|Direction Redstone Output|Is Host|$ARGS
 
 -- Args
 local args = { ... }
@@ -8,6 +8,7 @@ local floorName = args[3] or "Unnamed"
 local bundledRedstoneOutput = args[4] or "right"
 local directionRedstoneOutput = args[5] or "left"
 local movingRedstoneOutput = args[6] or "front"
+local isHost = args[7] or false
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
@@ -57,7 +58,7 @@ function start()
         floorNum = floorNum,
         floorName = floorName
     }
-    local joinOrCreate = network.joinOrCreate(channel, deviceData,
+    local joinOrCreate = network.joinOrCreate(channel, isHost, deviceData,
         function(devices)
             floors = devices
             table.sort(floors,

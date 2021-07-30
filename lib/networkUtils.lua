@@ -2,10 +2,9 @@
 local M = {}
 
 
-function M.joinOrCreate(channel, device, onChange)
+function M.joinOrCreate(channel, isHost, device, onChange)
   local modem = peripheral.find("modem")
   local devices = {}
-  local isHost = false
 
   local function startListener()
     while true do
@@ -36,11 +35,8 @@ function M.joinOrCreate(channel, device, onChange)
   end
   
   local function attemptJoinNetwork()
-    local delay = (math.random() * 2.5)
     local function join()
-      print(" > Attempting to join network on: "..channel)
-      print(" > Random join delay: "..delay)
-      os.sleep(delay)
+      print(" > Polling network on channel: "..channel)
 
       modem.transmit(channel, channel,
         {
@@ -64,23 +60,24 @@ function M.joinOrCreate(channel, device, onChange)
       end
     end
 
-    parallel.waitForAny(join,
-      function()
-        os.sleep(delay + 0.5)
-        print(" > No network fonund, assuming host... ")
-        isHost = true
-      end
-    )
+    while true do
+      parallel.waitForAny(join,
+        function()
+          os.sleep(5)
+        end
+      )
+    end
   end
 
   modem.open(channel)
 
-  attemptJoinNetwork()
+
   if isHost then
-    devices = { device }
     onChange(devices)
+    startListener()
+  else
+    attemptJoinNetwork()
   end
-  startListener()
 
   return isHost
 
