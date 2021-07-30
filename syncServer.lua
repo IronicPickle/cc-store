@@ -226,6 +226,7 @@ local function start()
     end
 
     while true do
+        CRASHED = false
         startThreads();
     end
     
