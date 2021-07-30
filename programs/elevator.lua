@@ -57,17 +57,22 @@ function start()
         floorNum = floorNum,
         floorName = floorName
     }
-    local joinOrCreate = network.joinOrCreate(channel, isHost, deviceData,
-        function(devices)
-            floors = devices
-            table.sort(floors,
-                function(a, b) return a.floorNum > b.floorNum end
-            )
-            drawHeader()
-            drawFooter()
-            drawMain()
-        end
-    )
+
+    floor = { deviceData }
+
+    local joinOrCreate = function()
+        network.joinOrCreate(channel, isHost, deviceData,
+            function(devices)
+                floors = devices
+                table.sort(floors,
+                    function(a, b) return a.floorNum > b.floorNum end
+                )
+                drawHeader()
+                drawFooter()
+                drawMain()
+            end
+        )
+    end
 
     parallel.waitForAny(joinOrCreate, await)
 end

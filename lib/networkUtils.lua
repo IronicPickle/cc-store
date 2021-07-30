@@ -4,7 +4,7 @@ local M = {}
 
 function M.joinOrCreate(channel, isHost, device, onChange)
   local modem = peripheral.find("modem")
-  local devices = {}
+  local devices = { device }
 
   local function startListener()
     while true do
