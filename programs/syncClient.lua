@@ -1,4 +1,4 @@
---$ARGS|Sync Server Channel|$ARGS
+--$ARGS|Sync Server Channel (40100)|$ARGS
 
 -- Args
 local ARGS = { ... }

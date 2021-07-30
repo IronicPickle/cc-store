@@ -1,4 +1,4 @@
---$ARGS|Channel(10)|Floor Number(1)|Floor Name(Unnamed)|Bundled Redstone Output(right)|Direction Redstone Output(left)|Moving Redstone Output(front)|Is Host(false)|$ARGS
+--$ARGS|Channel (10)|Floor Number (1)|Floor Name (Unnamed)|Bundled Redstone Output (right)|Direction Redstone Output (left)|Moving Redstone Output (front)|Is Host (false)|$ARGS
 
 -- Args
 local args = { ... }
@@ -8,7 +8,7 @@ local floorName = args[3] or "Unnamed"
 local bundledRedstoneOutput = args[4] or "right"
 local directionRedstoneOutput = args[5] or "left"
 local movingRedstoneOutput = args[6] or "front"
-local isHost = args[7] or false
+local isHost = args[7] == "true"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")

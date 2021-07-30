@@ -1,4 +1,4 @@
---$ARGS|Channel|Delay|Open Delay|Close Delay|Redstone Output|Name|$ARGS
+--$ARGS|Channel (20)|Delay (15)|Open Delay (3)|Close Delay (3)|Redstone Output (right)|Name (Unnamed)|$ARGS
 
 -- Args
 local args = { ... }
@@ -121,7 +121,7 @@ function close()
     updateState()
     drawHeader()
     drawFooter()
-    for i = openDelay, 0, -0.1 do
+    for i = closeDelay, 0, -0.1 do
         drawMain(i, openDelay)
         sleep(0.1)
     end

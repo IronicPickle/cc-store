@@ -1,4 +1,4 @@
---$ARGS|Channel|Redstone Output|Name|$ARGS
+--$ARGS|Channel (30)|Redstone Output (right)|Name (Unnamed)|$ARGS
 
 -- Args
 local args = { ... }
