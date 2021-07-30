@@ -1,0 +1,4 @@
+{
+  "Lua.diagnostics.disable": ["undefined-field"],
+  "Lua.diagnostics.globals": ["peripheral", "parallel"]
+}
