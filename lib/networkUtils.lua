@@ -16,11 +16,11 @@ function M.joinOrCreate(channel, device, onChange)
           if body.type == "/network/join" then
             table.insert(devices, body.device)
             modem.transmit(channel, channel, {
-              type = "network/join-res",
+              type = "/network/join-res",
               devices = devices
             })
             modem.transmit(channel, channel, {
-              type = "network/update",
+              type = "/network/update",
               devices = devices
             })
             onChange(devices)
@@ -54,7 +54,7 @@ function M.joinOrCreate(channel, device, onChange)
       while true do
         local event, _, _, _, body = os.pullEvent()
         if event == "modem_message" then
-          if body.type == "network/join-res" then
+          if body.type == "/network/join-res" then
             print(" > Network joined")
             devices = body.devices
             onChange(devices)
