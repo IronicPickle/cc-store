@@ -10,6 +10,8 @@ local DO_SETUP = ARGS[7] == "true" or false
 
 local DEPS = {}
 
+local CRASHED = false
+
 local function printConfig()
     print(" > Configuration")
     print("    - Channel: "..CHANNEL)
@@ -141,11 +143,8 @@ local function runFirstTimeSetup()
 end
 
 local function startProgram()
-    local crashed = false
     print("\n <---> Starting Program")
-    while not crashed do 
-        crashed = not shell.run(DIR.."/programs/"..PROGRAM..PROGRAM_ARGS);
-    end
+    CRASHED = not shell.run(DIR.."/programs/"..PROGRAM..PROGRAM_ARGS);
     print("\n <---> Program Exited")
 end
 
@@ -210,7 +209,11 @@ end
 
 local function startThreads()
     term.clear();
-    parallel.waitForAny(startListener, startProgram)
+    while not crashed do 
+        parallel.waitForAny(startListener, startProgram)
+        sleep(0.25)
+    end
+    print("<---> Crash detected, not restarting...")
 end
 
 local function start()
