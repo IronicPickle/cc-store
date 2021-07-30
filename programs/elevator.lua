@@ -1,4 +1,4 @@
---$ARGS|Channel|Floor Number|Floor Name|Bundled Redstone Output|Direction Redstone Output|Is Host|$ARGS
+--$ARGS|Channel|Floor Number|Floor Name|Bundled Redstone Output|Direction Redstone Output|Moving Redstone Output|Is Host|$ARGS
 
 -- Args
 local args = { ... }
