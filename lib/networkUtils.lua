@@ -54,7 +54,7 @@ function M.joinOrCreate(channel, isHost, device, onChange)
             print(" > Network joined")
             devices = body.devices
             onChange(devices)
-            break
+            return
           end
         end
       end
