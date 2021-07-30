@@ -30,7 +30,6 @@ local modem = wrappedPers.modem[1]
 local speaker = peripheral.find("speaker")
 
 -- Setup
-local devices = {}
 local floors = {}
 local moving = false
 local direction = 0

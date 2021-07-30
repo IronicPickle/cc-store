@@ -74,12 +74,11 @@ function M.joinOrCreate(channel, isHost, device, onChange)
 
   if isHost then
     onChange(devices)
-    startListener()
   else
     attemptJoinNetwork()
   end
 
-  return isHost
+  startListener()
 
 end
 
