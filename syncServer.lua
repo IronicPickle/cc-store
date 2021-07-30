@@ -209,7 +209,7 @@ end
 
 local function startThreads()
     term.clear();
-    while not crashed do 
+    while not CRASHED do 
         parallel.waitForAny(startListener, startProgram)
         sleep(0.5)
     end
