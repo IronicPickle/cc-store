@@ -15,7 +15,7 @@ local monUtils = require("/lua/lib/monitorUtils")
 local write = monUtils.write
 local drawBox = monUtils.drawBox
 local stateHandler = require("/lua/lib/stateHandler")
-local network = require("/lua/lib/network")
+local network = require("/lua/lib/networkUtils")
 
 -- Peripherals
 local wrappedPers = setup.getPers({
@@ -68,7 +68,7 @@ function start()
             drawMain()
         end
     )
-    
+
     parallel.waitForAny(joinOrCreate, await)
 end
 
