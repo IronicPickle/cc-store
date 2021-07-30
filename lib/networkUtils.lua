@@ -10,6 +10,7 @@ function M.joinOrCreate(channel, device, onChange)
   local function startListener()
     while true do
       local event, _, _, _, body = os.pullEvent()
+      print(textutils.serialiseJSON(body))
 
       if event == "modem_message" then
         if isHost then
