@@ -207,9 +207,7 @@ end
 
 local function startThreads()
     term.clear();
-    while true do  
-        parallel.waitForAny(startListener, startProgram)
-    end
+    parallel.waitForAny(startListener, startProgram)
 end
 
 local function start()
