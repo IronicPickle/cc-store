@@ -50,6 +50,8 @@ function M.joinOrCreate(channel, device, onChange)
         }
       )
 
+      print(" > Awaiting join response ")
+
       while true do
         local event, _, _, _, body = os.pullEvent()
         if event == "modem_message" then
