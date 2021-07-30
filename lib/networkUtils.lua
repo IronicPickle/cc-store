@@ -66,7 +66,7 @@ function M.joinOrCreate(channel, device, onChange)
 
     parallel.waitForAny(join,
       function()
-        os.sleep(delay + 2.5)
+        os.sleep(delay + 0.5)
         print(" > No network fonund, assuming host... ")
         isHost = true
       end
