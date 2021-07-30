@@ -83,6 +83,8 @@ function M.joinOrCreate(channel, device, onChange)
   end
   startListener()
 
+  print("test")
+
   return isHost
 
 end
