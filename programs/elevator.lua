@@ -15,6 +15,7 @@ local monUtils = require("/lua/lib/monitorUtils")
 local write = monUtils.write
 local drawBox = monUtils.drawBox
 local stateHandler = require("/lua/lib/stateHandler")
+local network = require("/lua/lib/network")
 
 -- Peripherals
 local wrappedPers = setup.getPers({
@@ -49,7 +50,6 @@ local winMain = setup.setupWindow(
 )
 
 -- Main
-
 function start()
     print("# Program Started")
     
@@ -57,25 +57,19 @@ function start()
         floorNum = floorNum,
         floorName = floorName
     }
-    devices = setup.setupNetwork(
-        modem, channel, deviceData, monitor
-    )
-    local map = {}
-    for i, device in ipairs(devices) do
-        if(not map[device.floorNum]) then
-            table.insert(floors, device)
-            map[device.floorNum] = true
+    local joinOrCreate = network.joinOrCreate(channel, deviceData,
+        function(devices)
+            floors = devices
+            table.sort(floors,
+                function(a, b) return a.floorNum > b.floorNum end
+            )
+            drawHeader()
+            drawFooter()
+            drawMain()
         end
-    end
-    
-    table.sort(floors,
-        function(a, b) return a.floorNum > b.floorNum end
     )
-    drawHeader()
-    drawFooter()
-    drawMain()
     
-    await()
+    parallel.waitForAny(joinOrCreate, await)
 end
 
 function await()
