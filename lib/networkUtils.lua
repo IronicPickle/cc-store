@@ -36,8 +36,8 @@ function M.joinOrCreate(channel, device, onChange)
   end
   
   local function attemptJoinNetwork()
+    local delay = (math.random() * 2.5)
     local function join()
-      local delay = (math.random() * 10)
       print(" > Attempting to join network on: "..channel)
       print(" > Random join delay: "..delay)
       os.sleep(delay)
@@ -66,7 +66,7 @@ function M.joinOrCreate(channel, device, onChange)
 
     parallel.waitForAny(join,
       function()
-        os.sleep(5)
+        os.sleep(delay + 2.5)
         print(" > No network fonund, assuming host... ")
         isHost = true
       end
