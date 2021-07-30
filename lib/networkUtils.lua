@@ -54,7 +54,6 @@ function M.joinOrCreate(channel, device, onChange)
 
       while true do
         local event, _, _, _, body = os.pullEvent()
-        print(textutils.serialiseJSON(body))
         if event == "modem_message" then
           if body.type == "network/join-res" then
             devices = body.devices
@@ -82,8 +81,6 @@ function M.joinOrCreate(channel, device, onChange)
     onChange(devices)
   end
   startListener()
-
-  print("test")
 
   return isHost
 
