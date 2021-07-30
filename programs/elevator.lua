@@ -154,7 +154,7 @@ function sendSignal(floorNum)
         bundledRedstoneOutput, colorDecimal
     )
     redstone.setOutput(
-        directionRedstoneOutput, direction > 0
+        directionRedstoneOutput, direction < 0
     )
     redstone.setOutput(
         movingRedstoneOutput, moving
