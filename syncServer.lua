@@ -213,7 +213,8 @@ local function startThreads()
         parallel.waitForAny(startListener, startProgram)
         sleep(0.5)
     end
-    print("\n <---> Crash detected, not restarting...")
+    print("\n <---> Crash detected, starting standalone listener...")
+    startListener()
 end
 
 local function start()
