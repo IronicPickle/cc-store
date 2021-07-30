@@ -35,6 +35,8 @@ function M.joinOrCreate(channel, isHost, device, onChange)
   end
   
   local function attemptJoinNetwork()
+    local success = false
+
     local function join()
       print(" > Polling network on channel: "..channel)
 
@@ -54,13 +56,14 @@ function M.joinOrCreate(channel, isHost, device, onChange)
             print(" > Network joined")
             devices = body.devices
             onChange(devices)
-            return
+            success = true
+            break
           end
         end
       end
     end
 
-    while true do
+    while not success do
       parallel.waitForAny(join,
         function()
           os.sleep(5)
