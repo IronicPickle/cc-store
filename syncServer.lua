@@ -141,8 +141,11 @@ local function runFirstTimeSetup()
 end
 
 local function startProgram()
+    local crashed = false
     print("\n <---> Starting Program")
-    shell.run(DIR.."/programs/"..PROGRAM..PROGRAM_ARGS);
+    while not crashed do 
+        crashed = not shell.run(DIR.."/programs/"..PROGRAM..PROGRAM_ARGS);
+    end
     print("\n <---> Program Exited")
 end
 
@@ -193,7 +196,7 @@ local function startListener()
                     os.sleep(5)
                     os.reboot()
                 end
-
+ 
                 if #changes > 0 then
                     print("\n <---> Updates downloaded, restarting...")
                     os.sleep(1)
