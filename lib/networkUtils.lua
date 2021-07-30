@@ -37,7 +37,7 @@ function M.joinOrCreate(channel, device, onChange)
   
   local function attemptJoinNetwork()
     local function join()
-      local delay = (math.random() * 2.5)
+      local delay = (math.random() * 10)
       print(" > Attempting to join network on: "..channel)
       print(" > Random join delay: "..delay)
       os.sleep(delay)
