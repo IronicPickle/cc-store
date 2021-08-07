@@ -67,7 +67,7 @@ function M.joinOrCreate(channel, isHost, device, onChange)
           return
         end
       elseif event == "key_up" then
-        if key == 211 then
+        if key == 261 then -- DEL key
           modem.transmit(channel, channel, {
             type = "/network/reset"
           })
