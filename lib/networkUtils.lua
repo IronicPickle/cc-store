@@ -37,7 +37,7 @@ function M.joinOrCreate(channel, isHost, device, onChange)
 
   local function startListener()
     while true do
-      local event, _, _, _, body = os.pullEvent()
+      local event, key, _, _, body = os.pullEvent()
 
       if event == "modem_message" then
         if isHost then
@@ -60,6 +60,17 @@ function M.joinOrCreate(channel, isHost, device, onChange)
             devices = body.devices
             handleChange()
           end
+        end
+
+        if body.type == "/network/reset" then
+          if isHost then saveState(devices) end
+          return
+        end
+      elseif event == "key_up" then
+        if key == 211 then
+          modem.transmit(channel, channel, {
+            type = "/network/reset"
+          })
         end
       end
     end
