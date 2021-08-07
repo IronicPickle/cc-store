@@ -65,7 +65,7 @@ function M.joinOrCreate(channel, isHost, device, onChange)
         if body.type == "/network/reset" then
           print(" > Received network reset request")
           if isHost then saveState({}) end
-          os.sleep(2.5)
+          os.sleep(2)
           return
         end
       elseif event == "key_up" then
@@ -75,7 +75,7 @@ function M.joinOrCreate(channel, isHost, device, onChange)
           modem.transmit(channel, channel, {
             type = "/network/reset"
           })
-          os.sleep(2.5)
+          os.sleep(2)
           return
         end
       end
