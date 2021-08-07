@@ -63,7 +63,7 @@ function M.joinOrCreate(channel, isHost, device, onChange)
         end
 
         if body.type == "/network/reset" then
-          if isHost then saveState(devices) end
+          if isHost then saveState({}) end
           return
         end
       elseif event == "key_up" then
