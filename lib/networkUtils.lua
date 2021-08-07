@@ -1,10 +1,16 @@
 -- Libraries
-local utils = require("/lua/lib/utils")
 local stateHandler = require("/lua/lib/stateHandler")
 
 -- Exported table
 local M = {}
 
+
+local function deviceOnNetwork(devices, device)
+  for _,v in ipairs(devices) do
+      if v.id == device.id then return true end
+  end
+  return false
+end
 
 local function getState()
   local state = stateHandler.getState("network")
@@ -18,8 +24,9 @@ end
 
 function M.joinOrCreate(channel, isHost, device, onChange)
   local modem = peripheral.find("modem")
+  device.id = os.getComputerID()
   local devices = getState() or {}
-  if not utils.tableHasValue(devices, device) then
+  if not deviceOnNetwork(devices, device) then
     table.insert(devices, device)
   end
 
@@ -35,7 +42,7 @@ function M.joinOrCreate(channel, isHost, device, onChange)
       if event == "modem_message" then
         if isHost then
           if body.type == "/network/join" then
-            if not utils.tableHasValue(devices, body.device) then
+            if not deviceOnNetwork(devices, body.device) then
               table.insert(devices, body.device)
               modem.transmit(channel, channel, {
                 type = "/network/update",
