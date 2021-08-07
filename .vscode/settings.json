@@ -1,4 +1,4 @@
 {
   "Lua.diagnostics.disable": ["undefined-field"],
-  "Lua.diagnostics.globals": ["peripheral", "parallel"]
+  "Lua.diagnostics.globals": ["peripheral", "parallel", "fs", "textutils"]
 }

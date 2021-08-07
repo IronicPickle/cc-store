@@ -1,10 +1,32 @@
+-- Libraries
+local utils = require("/lua/lib/utils")
+local stateHandler = require("/lua/lib/stateHandler")
+
 -- Exported table
 local M = {}
 
 
+local function getState()
+  local state = stateHandler.getState("network")
+  return state
+end
+
+local function saveState(devices)
+  local state = stateHandler.updateState("network", devices)
+  return state
+end
+
 function M.joinOrCreate(channel, isHost, device, onChange)
   local modem = peripheral.find("modem")
-  local devices = { device }
+  local devices = getState() or {}
+  if not utils.tableHasValue(devices, device) then
+    table.insert(devices, device)
+  end
+
+  local function handleChange()
+    saveState(devices)
+    onChange(devices)
+  end
 
   local function startListener()
     while true do
@@ -13,21 +35,23 @@ function M.joinOrCreate(channel, isHost, device, onChange)
       if event == "modem_message" then
         if isHost then
           if body.type == "/network/join" then
-            table.insert(devices, body.device)
+            if not utils.tableHasValue(devices, body.device) then
+              table.insert(devices, body.device)
+              modem.transmit(channel, channel, {
+                type = "/network/update",
+                devices = devices
+              })
+              handleChange()
+            end
             modem.transmit(channel, channel, {
               type = "/network/join-res",
               devices = devices
             })
-            modem.transmit(channel, channel, {
-              type = "/network/update",
-              devices = devices
-            })
-            onChange(devices)
           end
         else
           if body.type == "/network/update" then
             devices = body.devices
-            onChange(devices)
+            handleChange()
           end
         end
       end
@@ -55,7 +79,7 @@ function M.joinOrCreate(channel, isHost, device, onChange)
           if body.type == "/network/join-res" then
             print(" > Network joined")
             devices = body.devices
-            onChange(devices)
+            handleChange()
             success = true
             break
           end
@@ -74,9 +98,8 @@ function M.joinOrCreate(channel, isHost, device, onChange)
 
   modem.open(channel)
 
-
   if isHost then
-    onChange(devices)
+    handleChange()
   else
     attemptJoinNetwork()
   end

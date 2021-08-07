@@ -1,6 +1,6 @@
 local M = {}
 
-function constructPath(fileName)
+local function constructPath(fileName)
     return "/lua/state/" .. fileName .. ".state"
 end
 
@@ -9,11 +9,10 @@ M.updateState = function(fileName, data)
     if(not fs.isDir("/lua/state")) then
         fs.makeDir("/lua/state")
     end
-    
+
     local file = fs.open(filePath, "w")
     file.write(textutils.serialize(data))
     file.close()
-    
 end
 
 M.getState = function(fileName)
