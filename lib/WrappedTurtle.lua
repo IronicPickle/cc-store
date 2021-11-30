@@ -1,20 +1,20 @@
-local TrackedTurtle = {}
+local WrappedTurtle = {}
 
-function TrackedTurtle:new(turtle)
+function WrappedTurtle:new(turtle)
   local o = { turtle = turtle, orientation = 0, x = 0, y = 0, z = 0 }
   setmetatable(o, self)
   self.__index = self
   return o
 end
 
-function TrackedTurtle:resetTracker()
+function WrappedTurtle:resetTracker()
   self.orientation = 0
   self.x = 0
   self.y = 0
   self.z = 0
 end
 
-function TrackedTurtle:forward(distance, dig)
+function WrappedTurtle:forward(distance, dig)
   if distance == nil then distance = 1 end
   self:updateTrackerCoords(distance)
   local travelled = 0
@@ -27,7 +27,7 @@ function TrackedTurtle:forward(distance, dig)
   return travelled == distance, travelled
 end
 
-function TrackedTurtle:back(distance)
+function WrappedTurtle:back(distance)
   if distance == nil then distance = 1 end
   local travelled = 0
   for i = 1, distance do
@@ -39,19 +39,19 @@ function TrackedTurtle:back(distance)
   return travelled == distance, travelled
 end
 
-function TrackedTurtle:right(distance, dig)
+function WrappedTurtle:right(distance, dig)
   if distance == nil then distance = 1 end
   self:turnRight()
   return self:forward(distance, dig)
 end
 
-function TrackedTurtle:left(distance, dig)
+function WrappedTurtle:left(distance, dig)
   if distance == nil then distance = 1 end
   self:turnLeft()
   return self:forward(distance, dig)
 end
 
-function TrackedTurtle:up(distance, dig)
+function WrappedTurtle:up(distance, dig)
   if distance == nil then distance = 1 end
   local travelled = 0
   for i = 1, distance do
@@ -64,7 +64,7 @@ function TrackedTurtle:up(distance, dig)
   return travelled == distance, travelled
 end
 
-function TrackedTurtle:down(distance, dig)
+function WrappedTurtle:down(distance, dig)
   if distance == nil then distance = 1 end
   local travelled = 0
   for i = 1, distance do
@@ -77,7 +77,7 @@ function TrackedTurtle:down(distance, dig)
   return travelled == distance, travelled
 end
 
-function TrackedTurtle:turnRight()
+function WrappedTurtle:turnRight()
   local success = self.turtle.turnRight()
   if not success then return false end
   local newOrientation = self.orientation + 1
@@ -86,7 +86,7 @@ function TrackedTurtle:turnRight()
   return true
 end
 
-function TrackedTurtle:turnLeft()
+function WrappedTurtle:turnLeft()
   local success = self.turtle.turnLeft()
   if not success then return false end
   local newOrientation = self.orientation - 1
@@ -95,11 +95,11 @@ function TrackedTurtle:turnLeft()
   return true
 end
 
-function TrackedTurtle:turnAround()
+function WrappedTurtle:turnAround()
   return self:turnLeft() and self:turnLeft()
 end
 
-function TrackedTurtle:move(direction)
+function WrappedTurtle:move(direction)
   actions = {
     forward = function() self:forward() end,
     back = function() self:back() end,
@@ -111,7 +111,7 @@ function TrackedTurtle:move(direction)
   return actions[direction]()
 end
 
-function TrackedTurtle:turn(direction)
+function WrappedTurtle:turn(direction)
   actions = {
     right = function() self:turnRight() end,
     left = function() self:turnLeft() end,
@@ -120,25 +120,25 @@ function TrackedTurtle:turn(direction)
   return actions[direction]()
 end
 
-function TrackedTurtle:dig()
+function WrappedTurtle:dig()
   if self.turtle.detect() then
       self.turtle.dig()
   end
 end
 
-function TrackedTurtle:digUp()
+function WrappedTurtle:digUp()
   if self.turtle.detectUp() then
       self.turtle.digUp()
   end
 end
 
-function TrackedTurtle:digDown()
+function WrappedTurtle:digDown()
   if self.turtle.detectDown() then
       self.turtle.digDown()
   end
 end
 
-function TrackedTurtle:updateTrackerCoords(distance, orientation)
+function WrappedTurtle:updateTrackerCoords(distance, orientation)
   if orientation == nil then orientation = self.orientation end
   actions = {
     [0] = function() self.x = self.x + distance end,
@@ -153,4 +153,4 @@ function TrackedTurtle:updateTrackerCoords(distance, orientation)
 end
   
 
-return TrackedTurtle
+return WrappedTurtle
