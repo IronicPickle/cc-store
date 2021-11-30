@@ -19,14 +19,14 @@ function TrackedTurtle:forward(distance, dig)
   self:updateTrackerCoords(distance)
   for i = 1, distance do
     if dig then self:dig() end
-    self.turtle.forward()
+    return self.turtle.forward()
   end
 end
 
 function TrackedTurtle:back(distance)
   if distance == nil then distance = 1 end
   for i = 1, distance do
-    self.turtle.back()
+    return self.turtle.back()
   end
   self:updateTrackerCoords(distance)
 end
@@ -47,7 +47,7 @@ function TrackedTurtle:up(distance, dig)
   if distance == nil then distance = 1 end
   for i = 1, distance do
     if dig then self:digUp() end
-    self.turtle.up()
+    return self.turtle.up()
   end
   self:updateTrackerCoords(distance, 4)
 end
@@ -56,7 +56,7 @@ function TrackedTurtle:down(distance, dig)
   if distance == nil then distance = 1 end
   for i = 1, distance do
     if dig then self:digDown() end
-    self.turtle.down()
+    return self.turtle.down()
   end
   self:updateTrackerCoords(distance, 5)
 end
