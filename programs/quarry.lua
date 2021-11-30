@@ -10,6 +10,8 @@ function start()
 
   local start = {10, 10, 10}
 
+  sleep(100)
+
 end
 
 start()
