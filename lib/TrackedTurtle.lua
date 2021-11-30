@@ -42,13 +42,13 @@ end
 function TrackedTurtle:right(distance, dig)
   if distance == nil then distance = 1 end
   self:turnRight()
-  self:forward(distance, dig)
+  return self:forward(distance, dig)
 end
 
 function TrackedTurtle:left(distance, dig)
   if distance == nil then distance = 1 end
   self:turnLeft()
-  self:forward(distance, dig)
+  return self:forward(distance, dig)
 end
 
 function TrackedTurtle:up(distance, dig)
@@ -78,22 +78,25 @@ function TrackedTurtle:down(distance, dig)
 end
 
 function TrackedTurtle:turnRight()
-  self.turtle.turnRight()
+  local success = self.turtle.turnRight()
+  if not success then return false end
   local newOrientation = self.orientation + 1
   if newOrientation > 3 then newOrientation = 0 end
   self.orientation = newOrientation
+  return true
 end
 
 function TrackedTurtle:turnLeft()
-  self.turtle.turnLeft()
+  local success = self.turtle.turnLeft()
+  if not success then return false end
   local newOrientation = self.orientation - 1
   if newOrientation < 0 then newOrientation = 3 end
   self.orientation = newOrientation
+  return true
 end
 
 function TrackedTurtle:turnAround()
-  self:turnLeft()
-  self:turnLeft()
+  return self:turnLeft() and self:turnLeft()
 end
 
 function TrackedTurtle:move(direction)
@@ -105,7 +108,7 @@ function TrackedTurtle:move(direction)
     up = function() self:up() end,
     down = function() self:down() end,
   }
-  actions[direction]()
+  return actions[direction]()
 end
 
 function TrackedTurtle:turn(direction)
@@ -114,7 +117,7 @@ function TrackedTurtle:turn(direction)
     left = function() self:turnLeft() end,
     around = function() self:turnAround() end,
   }
-  actions[direction]()
+  return actions[direction]()
 end
 
 function TrackedTurtle:dig()
