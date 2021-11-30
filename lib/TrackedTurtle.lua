@@ -1,22 +1,20 @@
-local utils = require("/lua/lib/utils")
+local TrackedTurtle = {}
 
-local M = {}
-
-function M.TrackedTurtle:new(turtle)
+function TrackedTurtle:new(turtle)
   local o = { turtle = turtle, orientation = 0, x = 0, y = 0, z = 0 }
   setmetatable(o, self)
   self.__index = self
   return o
 end
 
-function M.TrackedTurtle:resetTracker()
+function TrackedTurtle:resetTracker()
   self.orientation = 0
   self.x = 0
   self.y = 0
   self.z = 0
 end
 
-function M.TrackedTurtle:forward(distance)
+function TrackedTurtle:forward(distance)
   if distance == nil then distance = 1 end
   self.updateTrackerCoords(distance)
   for i = 1, distance do
@@ -24,7 +22,7 @@ function M.TrackedTurtle:forward(distance)
   end
 end
 
-function M.TrackedTurtle:back(distance)
+function TrackedTurtle:back(distance)
   if distance == nil then distance = 1 end
   for i = 1, distance do
     self.turtle.back()
@@ -32,7 +30,7 @@ function M.TrackedTurtle:back(distance)
   self.updateTrackerCoords(distance)
 end
 
-function M.TrackedTurtle:right(distance)
+function TrackedTurtle:right(distance)
   if distance == nil then distance = 1 end
   self.turnRight()
   for i = 1, distance do
@@ -41,7 +39,7 @@ function M.TrackedTurtle:right(distance)
   self.updateTrackerOrientation(distance)
 end
 
-function M.TrackedTurtle:left(distance)
+function TrackedTurtle:left(distance)
   if distance == nil then distance = 1 end
   self.turnLeft()
   for i = 1, distance do
@@ -50,7 +48,7 @@ function M.TrackedTurtle:left(distance)
   self.updateTrackerOrientation(distance)
 end
 
-function M.TrackedTurtle:up(distance)
+function TrackedTurtle:up(distance)
   if distance == nil then distance = 1 end
   for i = 1, distance do
     self.turtle.up()
@@ -58,7 +56,7 @@ function M.TrackedTurtle:up(distance)
   self.updateTrackerCoords(distance, 4)
 end
 
-function M.TrackedTurtle:down(distance)
+function TrackedTurtle:down(distance)
   if distance == nil then distance = 1 end
   for i = 1, distance do
     self.turtle.down()
@@ -66,26 +64,26 @@ function M.TrackedTurtle:down(distance)
   self.updateTrackerCoords(distance, 5)
 end
 
-function M.TrackedTurtle:turnRight()
+function TrackedTurtle:turnRight()
   self.turtle.turnRight()
   local newOrientation = self.orientation + 1
   if newOrientation > 3 then newOrientation = 0 end
   self.orientation = newOrientation
 end
 
-function M.TrackedTurtle:turnLeft()
+function TrackedTurtle:turnLeft()
   self.turtle.turnLeft()
   local newOrientation = self.orientation - 1
   if newOrientation < 0 then newOrientation = 3 end
   self.orientation = newOrientation
 end
 
-function M.TrackedTurtle:turnAround()
+function TrackedTurtle:turnAround()
   self.turnLeft()
   self.turnLeft()
 end
 
-function M.TrackedTurtle:move(direction)
+function TrackedTurtle:move(direction)
   actions = {
     forward = function() self:forward() end,
     back = function() self:back() end,
@@ -97,7 +95,7 @@ function M.TrackedTurtle:move(direction)
   actions[direction]()
 end
 
-function M.TrackedTurtle:turn(direction)
+function TrackedTurtle:turn(direction)
   actions = {
     right = function() self:turnRight() end,
     left = function() self:turnLeft() end,
@@ -106,7 +104,7 @@ function M.TrackedTurtle:turn(direction)
   actions[direction]()
 end
 
-function M.TrackedTurtle:updateTrackerCoords(distance, orientation)
+function TrackedTurtle:updateTrackerCoords(distance, orientation)
   if orientation == nil then orientation = self.orientation end
   actions = {
     [0] = function() self.x = self.x + distance end,
@@ -121,4 +119,4 @@ function M.TrackedTurtle:updateTrackerCoords(distance, orientation)
 end
   
 
-return M
+return TrackedTurtle
