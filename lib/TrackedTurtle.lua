@@ -33,19 +33,13 @@ end
 function TrackedTurtle:right(distance)
   if distance == nil then distance = 1 end
   self:turnRight()
-  for i = 1, distance do
-    self.turtle.right()
-  end
-  self:updateTrackerOrientation(distance)
+  self:forward(distance)
 end
 
 function TrackedTurtle:left(distance)
   if distance == nil then distance = 1 end
   self:turnLeft()
-  for i = 1, distance do
-    self.turtle.left()
-  end
-  self:updateTrackerOrientation(distance)
+  self:forward(distance)
 end
 
 function TrackedTurtle:up(distance)
