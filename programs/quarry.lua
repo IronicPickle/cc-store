@@ -1,7 +1,6 @@
 --$ARGS|Channel (40)|$ARGS
 
-local turtleUtils = require("/lua/lib/turtleUtils")
-local TrackedTurtle = turtleUtils.TrackedTurtle
+local TrackedTurtle = require("/lua/lib/TrackedTurtle")
 
 -- Args
 
