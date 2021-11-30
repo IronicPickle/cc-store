@@ -16,7 +16,7 @@ end
 
 function TrackedTurtle:forward(distance)
   if distance == nil then distance = 1 end
-  self.updateTrackerCoords(distance)
+  self:updateTrackerCoords(distance)
   for i = 1, distance do
     self.turtle.forward()
   end
@@ -27,25 +27,25 @@ function TrackedTurtle:back(distance)
   for i = 1, distance do
     self.turtle.back()
   end
-  self.updateTrackerCoords(distance)
+  self:updateTrackerCoords(distance)
 end
 
 function TrackedTurtle:right(distance)
   if distance == nil then distance = 1 end
-  self.turnRight()
+  self:turnRight()
   for i = 1, distance do
     self.turtle.right()
   end
-  self.updateTrackerOrientation(distance)
+  self:updateTrackerOrientation(distance)
 end
 
 function TrackedTurtle:left(distance)
   if distance == nil then distance = 1 end
-  self.turnLeft()
+  self:turnLeft()
   for i = 1, distance do
     self.turtle.left()
   end
-  self.updateTrackerOrientation(distance)
+  self:updateTrackerOrientation(distance)
 end
 
 function TrackedTurtle:up(distance)
@@ -53,7 +53,7 @@ function TrackedTurtle:up(distance)
   for i = 1, distance do
     self.turtle.up()
   end
-  self.updateTrackerCoords(distance, 4)
+  self:updateTrackerCoords(distance, 4)
 end
 
 function TrackedTurtle:down(distance)
@@ -61,7 +61,7 @@ function TrackedTurtle:down(distance)
   for i = 1, distance do
     self.turtle.down()
   end
-  self.updateTrackerCoords(distance, 5)
+  self:updateTrackerCoords(distance, 5)
 end
 
 function TrackedTurtle:turnRight()
@@ -79,8 +79,8 @@ function TrackedTurtle:turnLeft()
 end
 
 function TrackedTurtle:turnAround()
-  self.turnLeft()
-  self.turnLeft()
+  self:turnLeft()
+  self:turnLeft()
 end
 
 function TrackedTurtle:move(direction)
