@@ -14,10 +14,11 @@ function TrackedTurtle:resetTracker()
   self.z = 0
 end
 
-function TrackedTurtle:forward(distance)
+function TrackedTurtle:forward(distance, dig)
   if distance == nil then distance = 1 end
   self:updateTrackerCoords(distance)
   for i = 1, distance do
+    if dig then self:dig() end
     self.turtle.forward()
   end
 end
@@ -30,29 +31,31 @@ function TrackedTurtle:back(distance)
   self:updateTrackerCoords(distance)
 end
 
-function TrackedTurtle:right(distance)
+function TrackedTurtle:right(distance, dig)
   if distance == nil then distance = 1 end
   self:turnRight()
-  self:forward(distance)
+  self:forward(distance, dig)
 end
 
-function TrackedTurtle:left(distance)
+function TrackedTurtle:left(distance, dig)
   if distance == nil then distance = 1 end
   self:turnLeft()
-  self:forward(distance)
+  self:forward(distance, dig)
 end
 
-function TrackedTurtle:up(distance)
+function TrackedTurtle:up(distance, dig)
   if distance == nil then distance = 1 end
   for i = 1, distance do
+    if dig then self:digUp() end
     self.turtle.up()
   end
   self:updateTrackerCoords(distance, 4)
 end
 
-function TrackedTurtle:down(distance)
+function TrackedTurtle:down(distance, dig)
   if distance == nil then distance = 1 end
   for i = 1, distance do
+    if dig then self:digDown() end
     self.turtle.down()
   end
   self:updateTrackerCoords(distance, 5)
@@ -96,6 +99,24 @@ function TrackedTurtle:turn(direction)
     around = function() self:turnAround() end,
   }
   actions[direction]()
+end
+
+function TrackedTurtle:dig()
+  if self.turtle.detect() then
+      self.turtle.dig()
+  end
+end
+
+function TrackedTurtle:digUp()
+  if self.turtle.detectUp() then
+      self.turtle.digUp()
+  end
+end
+
+function TrackedTurtle:digDown()
+  if self.turtle.detectDown() then
+      self.turtle.digDown()
+  end
 end
 
 function TrackedTurtle:updateTrackerCoords(distance, orientation)
