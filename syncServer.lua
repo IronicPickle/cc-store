@@ -151,8 +151,9 @@ end
 local function startListener()
     print("\n <---> Starting Listener")
     local modem = peripheral.find("modem")
-    if modem == nil then error("Could not start listener, no modem present") end
-    modem.open(CHANNEL)
+    if modem then modem.open(CHANNEL) end
+    if modem == nil then print("\n <---> No modem present, networking disabled") return end
+    
 
     local needsRestart = false
 
