@@ -67,6 +67,7 @@ function takeSaplings()
     attempts = attempts + 1
     if attempts == 1 then print("No saplings in chest, will retry every 10 seconds...") end
     sleep(10)
+    if not needsSaplings() then break end
   end
   WT:reorient()
 end
@@ -108,6 +109,7 @@ function loadState()
 end
 
 function awaitGrowth()
+  print("# Awaiting Growth")
   while WT:compare(15) do
     sleep(5)
   end
