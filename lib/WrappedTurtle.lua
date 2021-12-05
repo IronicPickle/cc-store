@@ -370,6 +370,50 @@ function WrappedTurtle:suckDown(slot, amount)
   self:interact("down", slot, "suck", amount)
 end
 
+function WrappedTurtle:place(slot)
+  return self.turtle.place(slot)
+end
+
+function WrappedTurtle:placeUp(slot)
+  return self.turtle.placeUp(slot)
+end
+
+function WrappedTurtle:placeDown(slot)
+  return self.turtle.placeDown(slot)
+end
+
+function WrappedTurtle:compare(slot)
+  local prevSlot = self:getSelectedSlot()
+  self:select(slot)
+  local success = self.turtle.compare()
+  self:select(prevSlot)
+  return success
+end
+
+function WrappedTurtle:compareUp(slot)
+  local prevSlot = self:getSelectedSlot()
+  self:select(slot)
+  local success = self.turtle.compareUp()
+  self:select(prevSlot)
+  return success
+end
+
+function WrappedTurtle:compareDown(slot)
+  local prevSlot = self:getSelectedSlot()
+  self:select(slot)
+  local success = self.turtle.compareDown()
+  self:select(prevSlot)
+  return success
+end
+
+function WrappedTurtle:compareSlots(slot1, slot2)
+  local prevSlot = self:getSelectedSlot()
+  self:select(slot1)
+  local success = self.turtle.compareTo(slot2)
+  self:select(prevSlot)
+  return success
+end
+
 function WrappedTurtle:updateTrackerOrientation(orientation)
   self.orientation = orientation
   self:saveState()
