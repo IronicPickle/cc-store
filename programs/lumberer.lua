@@ -38,11 +38,9 @@ end
 function fetchAndDeposit()
   print("# Fetching and Despositing")
 
-  WT:returnToTracker(true, { "z", "y" })
   takeFuel()
   takeSaplings()
   depositInventory()
-  WT:returnToTracker(true, { "y", "z" })
   WT:setMode("nominal")
 end
 
