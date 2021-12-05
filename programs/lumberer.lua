@@ -10,7 +10,6 @@ local WrappedTurtle = require("/lua/lib/WrappedTurtle")
 local WT = WrappedTurtle:new(turtle)
 
 -- Globals
-local X = 0
 local Z = 0
 local Y = 0
 local FIRST_TIME = true
@@ -39,11 +38,11 @@ end
 function fetchAndDeposit()
   print("# Fetching and Despositing")
 
-  WT:returnToTracker(true, { "x", "z", "y" })
+  WT:returnToTracker(true, { "z", "y" })
   takeFuel()
   takeSaplings()
   depositInventory()
-  WT:returnToTracker(true, { "y", "z", "x" })
+  WT:returnToTracker(true, { "y", "z" })
   WT:setMode("nominal")
 end
 
@@ -65,7 +64,7 @@ function takeSaplings()
 
   WT:turnAround()
   local attempts = 0
-  while needsSaplings() do
+  while true do
     WT:suck(15, 64)
     if not needsSaplings() then break end
     attempts = attempts + 1
@@ -96,7 +95,6 @@ end
 
 function saveState()
   local state = {
-    x = X,
     y = Y,
     z = Z,
     firstTime = FIRST_TIME,
@@ -107,7 +105,6 @@ end
 function loadState()
   local state = stateHandler.getState("lumberer")
   if state then
-    X = state.x
     Z = state.z
     Y = state.y
     FIRST_TIME = state.firstTime
@@ -127,7 +124,7 @@ end
 function lumber()
   
   while true do
-    if WT.x == 0 then
+    if Z == 0 then
       fetchAndDeposit()
     
       if not WT:inspect() then
@@ -142,7 +139,7 @@ function lumber()
       awaitGrowth()
 
       while not WT:canForward(true) do fetchAndDeposit() end
-      X = X + 1
+      Z = Z + 1
       saveState()
       WT:forward(1, true)
     end
@@ -160,8 +157,8 @@ function lumber()
       WT:down(1, true)
     end
 
-    if X == 1 then
-      X = X - 1
+    if Z == 1 then
+      Z = Z - 1
       WT:back(1)
       WT:place(15)
     end
