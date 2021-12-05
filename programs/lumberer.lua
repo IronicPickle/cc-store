@@ -38,9 +38,11 @@ end
 function fetchAndDeposit()
   print("# Fetching and Despositing")
 
+  WT:reorient()
   takeFuel()
   takeSaplings()
   depositInventory()
+  WT:reorient()
   WT:setMode("nominal")
 end
 
@@ -137,27 +139,34 @@ function lumber()
       awaitGrowth()
 
       while not WT:canForward(true) do fetchAndDeposit() end
-      Z = Z + 1
-      saveState()
-      WT:forward(1, true)
+      parallel.waitForAll(
+        function() WT:forward(1, true) end,
+        function() Z = Z + 1 saveState() end
+      )
+      
     end
 
     for y = Y, MAX_Y - 2 do
       while not WT:canUp(true) do fetchAndDeposit() end
-      Y = Y + 1
-      saveState()
-      WT:up(1, true)
+      parallel.waitForAll(
+        function() WT:up(1, true) end,
+        function() Y = Y + 1 saveState() end
+      )
     end
 
     for y = 0, Y - 1 do
-      Y = Y - 1
-      saveState()
-      WT:down(1, true)
+      parallel.waitForAll(
+        function() WT:down(1, true) end,
+        function() Y = Y - 1 saveState() end
+      )
     end
 
     if Z == 1 then
-      Z = Z - 1
-      WT:back(1)
+      parallel.waitForAll(
+        function() WT:back(1) end,
+        function() Z = Z - 1 saveState() end
+      )
+
       WT:place(15)
     end
   end
