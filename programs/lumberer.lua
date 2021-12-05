@@ -120,7 +120,8 @@ function lumber()
   while true do
     fetchAndDeposit()
 
-    if WT:inspect() or not WT:compare(15) then
+    
+    if not WT:inspect() then
       local attempts = 0
       while not WT:place(15) do
         attempts = attempts + 1
