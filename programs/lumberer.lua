@@ -38,7 +38,7 @@ function fetchAndDeposit()
 
   WT:returnToTracker(true, { "z", "x", "y" })
   takeFuel()
-  if needsSaplings() then takeSaplings() end
+  takeSaplings()
   depositInventory()
   WT:returnToTracker(true, { "y", "x", "z" })
   WT:setMode("nominal")
@@ -62,7 +62,8 @@ function takeSaplings()
 
   WT:turnAround()
   local attempts = 0
-  while not WT:suck(15, 64) do
+  while needsSaplings() do
+    WT:suck(15, 64)
     attempts = attempts + 1
     if attempts == 1 then print("No saplings in chest, will retry every 10 seconds...") end
     sleep(10)
