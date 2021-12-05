@@ -42,7 +42,9 @@ function WrappedTurtle:forward(distance, dig, bypassFuel)
   distance = distance or 1
   for i = 1, distance do
     if self:canForward(dig, bypassFuel) then
-      if dig then self:dig() end
+      if dig then
+        while self:detect() do self:dig() end
+      end
       self:updateTrackerCoords(1)
       self.turtle.forward()
     end
@@ -74,7 +76,9 @@ function WrappedTurtle:up(distance, dig, bypassFuel)
   distance = distance or 1
   for i = 1, distance do
     if self:canUp(dig, bypassFuel) then
-      if dig then self:digUp() end
+      if dig then 
+        while self:detectUp() do self:digUp() end
+      end
       self:updateTrackerCoords(1, 4)
       self.turtle.up()
     end
@@ -85,7 +89,9 @@ function WrappedTurtle:down(distance, dig, bypassFuel)
   distance = distance or 1
   for i = 1, distance do
     if self:canDown(dig, bypassFuel) then
-      if dig then self:digDown() end
+      if dig then
+        while self:detectDown() do self:digDown() end
+      end
       self:updateTrackerCoords(1, 5)
       self.turtle.down()
     end
