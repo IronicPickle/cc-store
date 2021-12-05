@@ -154,7 +154,7 @@ function lumber()
       WT:up(1, true)
     end
 
-    for y = 0, Y do
+    for y = 0, Y - 1 do
       Y = Y - 1
       saveState()
       WT:down(1, true)
