@@ -144,14 +144,14 @@ function lumber()
       WT:forward(1, true)
     end
 
-    for y = Y, MAX_Y do
+    for y = Y, MAX_Y - 1 do
       while not WT:canUp(true) do fetchAndDeposit() end
       Y = Y + 1
       saveState()
       WT:up(1, true)
     end
 
-    for y = 0, Y - 1 do
+    for y = 0, Y do
       Y = Y - 1
       saveState()
       WT:down(1, true)
