@@ -101,11 +101,11 @@ function saveState()
     z = Z,
     firstTime = FIRST_TIME,
   }
-  stateHandler.updateState("quarry", state)
+  stateHandler.updateState("lumberer", state)
 end
 
 function loadState()
-  local state = stateHandler.getState("quarry")
+  local state = stateHandler.getState("lumberer")
   if state then
     X = state.x
     Z = state.z
@@ -140,7 +140,7 @@ function lumber()
       end
 
       awaitGrowth()
-      
+
       while not WT:canForward(true) do fetchAndDeposit() end
       X = X + 1
       saveState()
