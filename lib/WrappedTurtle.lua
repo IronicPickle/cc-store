@@ -371,15 +371,27 @@ function WrappedTurtle:suckDown(slot, amount)
 end
 
 function WrappedTurtle:place(slot)
-  return self.turtle.place(slot)
+  local prevSlot = self:getSelectedSlot()
+  self:select(slot)
+  local success = self.turtle.place(slot)
+  self:select(prevSlot)
+  return success
 end
 
 function WrappedTurtle:placeUp(slot)
-  return self.turtle.placeUp(slot)
+  local prevSlot = self:getSelectedSlot()
+  self:select(slot)
+  local success = self.turtle.palceUp(slot)
+  self:select(prevSlot)
+  return success
 end
 
 function WrappedTurtle:placeDown(slot)
-  return self.turtle.placeDown(slot)
+  local prevSlot = self:getSelectedSlot()
+  self:select(slot)
+  local success = self.turtle.placeDown(slot)
+  self:select(prevSlot)
+  return success
 end
 
 function WrappedTurtle:compare(slot)
