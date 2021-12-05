@@ -143,6 +143,7 @@ function lumber()
     WT:down(WT.y, true)
 
     WT:back(1)
+    WT:place(15)
   end
 
 end
