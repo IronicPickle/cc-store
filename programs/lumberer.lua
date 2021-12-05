@@ -60,7 +60,7 @@ end
 function takeSaplings()
   print("# Taking Saplings")
 
-  WT:suck(15, 64)
+  WT:turnAround()
   local attempts = 0
   while not WT:suck(15, 64) do
     attempts = attempts + 1
