@@ -132,8 +132,10 @@ function lumber()
 
     awaitGrowth()
 
-    while not WT:canForward(true) do fetchAndDeposit() end
-    WT:forward(1, true)
+    if WT.x == 0 then
+      while not WT:canForward(true) do fetchAndDeposit() end
+      WT:forward(1, true)
+    end
 
     for y = WT.y, MAX_Y do
       while not WT:canUp(true) do fetchAndDeposit() end
@@ -142,7 +144,7 @@ function lumber()
 
     WT:down(WT.y, true)
 
-    WT:back(1)
+    if WT.x == 1 then WT:back(1) end
     WT:place(15)
   end
 
