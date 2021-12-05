@@ -67,10 +67,10 @@ function takeSaplings()
   local attempts = 0
   while needsSaplings() do
     WT:suck(15, 64)
+    if not needsSaplings() then break end
     attempts = attempts + 1
     if attempts == 1 then print("No saplings in chest, will retry every 10 seconds...") end
     sleep(10)
-    if not needsSaplings() then break end
   end
   WT:reorient()
 end
@@ -140,6 +140,7 @@ function lumber()
       end
 
       awaitGrowth()
+      
       while not WT:canForward(true) do fetchAndDeposit() end
       X = X + 1
       saveState()
