@@ -10,6 +10,9 @@ local WrappedTurtle = require("/lua/lib/WrappedTurtle")
 local WT = WrappedTurtle:new(turtle)
 
 -- Globals
+local X = 0
+local Z = 0
+local Y = 0
 local FIRST_TIME = true
 
 -- Main
@@ -36,11 +39,11 @@ end
 function fetchAndDeposit()
   print("# Fetching and Despositing")
 
-  WT:returnToTracker(true, { "z", "x", "y" })
+  WT:returnToTracker(true, { "x", "z", "y" })
   takeFuel()
   takeSaplings()
   depositInventory()
-  WT:returnToTracker(true, { "y", "x", "z" })
+  WT:returnToTracker(true, { "y", "z", "x" })
   WT:setMode("nominal")
 end
 
@@ -93,6 +96,9 @@ end
 
 function saveState()
   local state = {
+    x = X,
+    y = Y,
+    z = Z,
     firstTime = FIRST_TIME,
   }
   stateHandler.updateState("quarry", state)
@@ -101,6 +107,9 @@ end
 function loadState()
   local state = stateHandler.getState("quarry")
   if state then
+    X = state.x
+    Z = state.z
+    Y = state.y
     FIRST_TIME = state.firstTime
     print("# Loaded Lumberer State")
     print(textutils.serialize(state))
@@ -118,34 +127,43 @@ end
 function lumber()
   
   while true do
-    fetchAndDeposit()
-
-    
-    if not WT:inspect() then
-      local attempts = 0
-      while not WT:place(15) do
-        attempts = attempts + 1
-        if attempts == 1 then print("Can't place sapling, will retry every 10 seconds...") end
-        sleep(10)
-      end
-    end
-
-    awaitGrowth()
-
     if WT.x == 0 then
+      fetchAndDeposit()
+    
+      if not WT:inspect() then
+        local attempts = 0
+        while not WT:place(15) do
+          attempts = attempts + 1
+          if attempts == 1 then print("Can't place sapling, will retry every 10 seconds...") end
+          sleep(10)
+        end
+      end
+
+      awaitGrowth()
       while not WT:canForward(true) do fetchAndDeposit() end
+      X = X + 1
+      saveState()
       WT:forward(1, true)
     end
 
-    for y = WT.y, MAX_Y do
+    for y = Y, MAX_Y do
       while not WT:canUp(true) do fetchAndDeposit() end
+      Y = Y + 1
+      saveState()
       WT:up(1, true)
     end
 
-    WT:down(WT.y, true)
+    for y = 0, Y do
+      Y = Y - 1
+      saveState()
+      WT:down(1, true)
+    end
 
-    if WT.x == 1 then WT:back(1) end
-    WT:place(15)
+    if X == 1 then
+      X = X - 1
+      WT:back(1)
+      WT:place(15)
+    end
   end
 
 end
