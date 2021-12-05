@@ -120,9 +120,13 @@ function lumber()
   while true do
     fetchAndDeposit()
 
-    while not WT:place(15) do
-      print("Can't place sapling, will retry every 10 seconds...")
-      sleep(10)
+    if not WT:compare(15) then
+      local attempts = 0
+      while not WT:place(15) do
+        attempts = attempts + 1
+        if attempts == 1 then print("Can't place sapling, will retry every 10 seconds...") end
+        sleep(10)
+      end
     end
 
     awaitGrowth()
