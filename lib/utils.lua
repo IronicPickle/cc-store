@@ -14,14 +14,4 @@ function M.concatTables(tab1, tab2)
   return tab1
 end
 
-function M.filterTable(tab, func)
-  local newTab = {}
-  for i=1, #tab do
-    if func(tab[i]) then
-      newTab[#newTab+1] = tab[i]
-    end
-  end
-  return newTab
-end
-
 return M
