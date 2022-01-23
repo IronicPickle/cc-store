@@ -154,11 +154,6 @@ function sendSignal(floorNum)
     end
     
     if(colorDecimal > 32768) then return end
-    if(moving) then colorDecimal = colorDecimal + 32768 end
-    
-    redstone.setBundledOutput(
-        bundledRedstoneOutput, 0
-    )
     
     redstone.setBundledOutput(
         bundledRedstoneOutput, colorDecimal
