@@ -65,7 +65,10 @@ function start()
         network.joinOrCreate(channel, isHost, deviceData,
             function(devices)
                 floors = utils.filterTable(devices, function(device)
-                    return not utils.tableHasValue(devices, device)
+                    for _,currDevice in ipairs(devices) do
+                        if currDevice.floorNum == device.floorNum then return false end
+                    end
+                    return true
                 end)
                 table.sort(floors,
                     function(a, b) return a.floorNum > b.floorNum end
