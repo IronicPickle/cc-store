@@ -64,7 +64,7 @@ function start()
     local joinOrCreate = function()
         network.joinOrCreate(channel, isHost, deviceData,
             function(devices)
-                floors = utils.filter(devices, function(device)
+                floors = utils.filterTable(devices, function(device)
                     return not utils.tableHasValue(devices, device)
                 end)
                 table.sort(floors,
