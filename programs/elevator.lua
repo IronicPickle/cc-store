@@ -64,9 +64,9 @@ function start()
     local joinOrCreate = function()
         network.joinOrCreate(channel, isHost, deviceData,
             function(devices)
-                floors = utils.filterTable(devices, function(device)
-                    for _,currDevice in ipairs(devices) do
-                        if currDevice.floorNum == device.floorNum then return false end
+                floors = utils.filterTable(devices, function(device, newDevices)
+                    for _,newDevice in ipairs(newDevices) do
+                        if newDevice.floorNum == device.floorNum then return false end
                     end
                     return true
                 end)
