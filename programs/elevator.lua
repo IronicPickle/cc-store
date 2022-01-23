@@ -17,6 +17,7 @@ local write = monUtils.write
 local drawBox = monUtils.drawBox
 local stateHandler = require("/lua/lib/stateHandler")
 local network = require("/lua/lib/networkUtils")
+local utils = require("/lua/lib/utils")
 
 -- Peripherals
 local wrappedPers = setup.getPers({
@@ -63,7 +64,12 @@ function start()
     local joinOrCreate = function()
         network.joinOrCreate(channel, isHost, deviceData,
             function(devices)
-                floors = devices
+                floors = utils.filterTable(devices, function(device)
+                    for _,currDevice in ipairs(devices) do
+                        if currDevice.floorNum == device.floorNum then return false end
+                    end
+                    return true
+                end)
                 table.sort(floors,
                     function(a, b) return a.floorNum > b.floorNum end
                 )
