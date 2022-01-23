@@ -17,7 +17,7 @@ end
 function M.filterTable(tab, func)
   local newTab = {}
   for i=1, #tab do
-    if func(tab[i]) then
+    if func(tab[i], newTab) then
       newTab[#newTab+1] = tab[i]
     end
   end
