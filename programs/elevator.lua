@@ -217,7 +217,7 @@ function drawMain()
     if(moving) then
         parallel.waitForAny(
             drawMoving, awaitFinish,
-            function() sleep(30) end
+            function() sleep(120) end
         )
         moving = false
         drawMain()
