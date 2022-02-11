@@ -212,7 +212,7 @@ end
 function WrappedTurtle:needsFuel(offset)
   offset = offset or 0
   local blocksToTracker = math.abs(self.x) + math.abs(self.y) + math.abs(self.z)
-  return self:getFuelLevel() < (blocksToTracker + 100 + offset)
+  return self:getFuelLevel() < ((blocksToTracker * 2) + 100 + offset)
 end
 
 function WrappedTurtle:refuel()
