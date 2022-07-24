@@ -147,10 +147,19 @@ function moveTo(floorIndex)
     await()
 end
 
-function sendSignal(floorNum)
+function getColorDecimalFromFloor(floorNum)
     local colorDecimal = 1
     for i = 1, floorNum - 1, 1 do
         colorDecimal = colorDecimal + colorDecimal
+    end
+end
+
+function sendSignal(floorNum)
+    local colorDecimal = 1
+    for i, floor in ipairs(floors) do
+        if(floor.floorNum ~= floorNum) then
+            colorDecimal = colorDecimal + getColorDecimalFromFloor(floor.floorNum)
+        end
     end
     
     if(colorDecimal > 32768) then return end
