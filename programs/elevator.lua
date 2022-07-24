@@ -156,7 +156,7 @@ function getColorDecimalFromFloor(floorNum)
 end
 
 function sendSignal(floorNum)
-    local colorDecimal = 1
+    local colorDecimal = 0
     for i, floor in ipairs(floors) do
         if(floor.floorNum ~= floorNum) then
             colorDecimal = colorDecimal + getColorDecimalFromFloor(floor.floorNum)
