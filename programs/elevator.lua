@@ -152,6 +152,7 @@ function getColorDecimalFromFloor(floorNum)
     for i = 1, floorNum - 1, 1 do
         colorDecimal = colorDecimal + colorDecimal
     end
+    return colorDecimal
 end
 
 function sendSignal(floorNum)
