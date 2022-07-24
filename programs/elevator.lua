@@ -162,7 +162,7 @@ function sendSignal(floorNum)
         directionRedstoneOutput, direction < 0
     )
     redstone.setOutput(
-        movingRedstoneOutput, !moving
+        movingRedstoneOutput, not moving
     )
     
 end
