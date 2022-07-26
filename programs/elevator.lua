@@ -1,11 +1,11 @@
---$ARGS|Channel (10)|Floor Number (1)|Floor Name (Unnamed)|Bundled Redstone Output (right)|Direction Redstone Output (left)|Moving Redstone Output (front)|Is Host (false)|$ARGS
+--$ARGS|Channel (10)|Floor Number (1)|Floor Name (Unnamed)|Destination Redstone Output (right)|Direction Redstone Output (left)|Moving Redstone Output (front)|Is Host (false)|$ARGS
 
 -- Args
 local args = { ... }
 local channel = tonumber(args[1]) or 10
 local floorNum = tonumber(args[2]) or 1
 local floorName = args[3] or "Unnamed"
-local bundledRedstoneOutput = args[4] or "right"
+local destinationRedstoneOutput = args[4] or "right"
 local directionRedstoneOutput = args[5] or "left"
 local movingRedstoneOutput = args[6] or "front"
 local isHost = args[7] == "true"
@@ -147,26 +147,9 @@ function moveTo(floorIndex)
     await()
 end
 
-function getColorDecimalFromFloor(floorNum)
-    local colorDecimal = 1
-    for i = 1, floorNum - 1, 1 do
-        colorDecimal = colorDecimal + colorDecimal
-    end
-    return colorDecimal
-end
-
-function sendSignal(floorNum)
-    local colorDecimal = 0
-    for i, floor in ipairs(floors) do
-        if(floor.floorNum ~= floorNum) then
-            colorDecimal = colorDecimal + getColorDecimalFromFloor(floor.floorNum)
-        end
-    end
-    
-    if(colorDecimal > 32768) then return end
-    
-    redstone.setBundledOutput(
-        bundledRedstoneOutput, colorDecimal
+function sendSignal(targetFloorNum)
+    redstone.setOutput(
+        destinationRedstoneOutput, floorNum ~= targetFloorNum
     )
     redstone.setOutput(
         directionRedstoneOutput, direction < 0
