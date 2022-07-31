@@ -24,4 +24,33 @@ function M.filterTable(tab, func)
   return newTab
 end
 
+function M.findInTable(tab, func)
+  for i=1, #tab do
+    if func(tab[i]) then
+      return tab[i]
+    end
+  end
+  return nil
+end
+
+
+function M.urlEncode(url)
+  if url == nil then
+    return
+  end
+  url = url:gsub("\n", "\r\n")
+  url = url:gsub("([^%w ])", function(char) return string.format("%%%02X", string.byte(char)) end)
+  url = url:gsub(" ", "+")
+  return url
+end
+
+function M.urlDecode(url)
+  if url == nil then
+    return
+  end
+  url = url:gsub("+", " ")
+  url = url:gsub("%%(%x%x)", function(char) return string.char(tonumber(char, 16)) end)
+  return url
+end
+
 return M
