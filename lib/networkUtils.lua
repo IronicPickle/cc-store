@@ -24,12 +24,12 @@ end
 
 function M.joinOrCreate(channel, isHost, device, onChange)
   local modem = peripheral.find("modem")
-  device.id = os.getComputerID()
+  if device then device.id = os.getComputerID() end
   local devices = {}
   if isHost then
     devices = getState() or {}
   end
-  if not deviceOnNetwork(devices, device) then
+  if device and not deviceOnNetwork(devices, device) then
     table.insert(devices, device)
   end
 
@@ -93,8 +93,8 @@ function M.joinOrCreate(channel, isHost, device, onChange)
 
       modem.transmit(channel, channel,
         {
-              type = "/network/join",
-              device = device
+          type = "/network/join",
+          device = device
         }
       )
 
