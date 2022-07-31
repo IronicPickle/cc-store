@@ -1,18 +1,19 @@
 
 --$ARGS|Channel (40)|Station Name (Unnamed)|Status Redstone Input (right)|Train Transponder Item (minecraft:paper)|$ARGS
 
--- Args
-local args = { ... }
-local channel = tonumber(args[1]) or 40
-local stationName = args[2] or "Unnamed"
-local statusRedstoneInput = args[3] or "right"
-local transponderItem = args[4] or "minecraft:paper"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
 local stateHandler = require("/lua/lib/stateHandler")
 local network = require("/lua/lib/networkUtils")
 local utils = require("/lua/lib/utils")
+
+-- Args
+local args = { ... }
+local channel = tonumber(args[1]) or 40
+local stationName = utils.urlDecode(args[2] or "Unnamed")
+local statusRedstoneInput = args[3] or "right"
+local transponderItem = args[4] or "minecraft:paper"
 
 -- Peripherals
 local wrappedPers = setup.getPers({
