@@ -47,12 +47,37 @@ function M.drawBox(output, x, y, dx, dy, filled, bgColor)
     output.setBackgroundColor(prevBgColor)
 end
 
-function M.createButton(output, x, y, xPadding, xPadding, bgColor, textColor, text)
-    local dx = x + text.len() + (xPadding * 2)
-    local dy = y + (xPadding * 2)
+function M.createButton(output, x, y, paddingX, paddingY, align, bgColor, textColor, text, onClick)
+    local len = text:len()
     
+    if(align == "center") then
+        x = ( ( output.x - len ) / 2 ) + x
+    elseif(align == "right") then
+        x = output.x - len - x
+    elseif(align == "left") then
+        x = x
+    end
+
+    local dx = x + len + (paddingX * 2) - 1
+    local dy = y + (paddingY * 2)
+
     M.drawBox(output, x, y, dx, dy, true, bgColor)
-    M.write(output, text, x + math.floor(dx / 2), math.floor(dy / 2), nil, textColor, bgColor)
+    M.write(output, text, x + paddingX, y + paddingY, nil, textColor, bgColor)
+
+    while true do
+        local event, p1, p2, p3, p4, p5 = os.pullEvent()
+        
+        local isTouch = (event == "monitor_touch")
+
+        if isTouch then
+            local touchX = p2 - output.posX + 1
+            local touchY = p3 - output.posY + 1
+
+            if touchX >= x and touchY >= y and touchX <= dx and touchY <= dy then
+                if onClick() then break end
+            end
+        end
+    end
 end
 
 return M
