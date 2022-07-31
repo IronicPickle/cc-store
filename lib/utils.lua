@@ -53,4 +53,8 @@ function M.urlDecode(url)
   return url
 end
 
+function M.capitalize(text)
+  return text:gsub("^%l", string.upper)
+end
+
 return M

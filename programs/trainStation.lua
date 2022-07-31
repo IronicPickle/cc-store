@@ -1,7 +1,6 @@
 
 --$ARGS|Channel (40)|Station Name (Unnamed)|Status Redstone Input (right)|Train Transponder Item (minecraft:paper)|$ARGS
 
-
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
 local stateHandler = require("/lua/lib/stateHandler")
@@ -36,6 +35,19 @@ local DESTINATIONS = {}
 local CURR_TRAIN = nil
 
 function start()
+  parallel.waitForAny(joinNetwork, await)
+
+end
+
+function joinNetwork()
+  local deviceData = {
+    stationName = stationName
+  }
+
+  network.joinOrCreate(channel, false, deviceData)
+end
+
+function await()
   while true do
     awaitTrain()
 

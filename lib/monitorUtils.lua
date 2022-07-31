@@ -51,9 +51,9 @@ function M.createButton(output, x, y, paddingX, paddingY, align, bgColor, textCo
     local len = text:len()
     
     if(align == "center") then
-        x = ( ( output.x - len ) / 2 ) + x
+        x = ( ( output.x - (len + paddingX) ) / 2 ) + x
     elseif(align == "right") then
-        x = output.x - len - x
+        x = output.x - (len + paddingX) - x
     elseif(align == "left") then
         x = x
     end
