@@ -35,7 +35,7 @@ function M.joinOrCreate(channel, isHost, device, onChange)
 
   local function handleChange()
     if isHost then saveState(devices) end
-    onChange(devices)
+    if onChange then onChange(devices) end
   end
 
   local function startListener()
