@@ -13,7 +13,7 @@ function renderButtons(output, buttons)
             true, button.color
         )
         write(output,
-            (button.text), 1, button.y, "centre",
+            (button.text), 1, button.y, "center",
             colors.white, button.color
         )
     end
@@ -110,7 +110,7 @@ M.ender = function(outputsTable)
         )
         write(controlOutput,
             "Controls:",
-            1, 2, "centre"
+            1, 2, "center"
         )
     
         renderButtons(controlOutput, buttons)
@@ -168,7 +168,7 @@ M.power = function(outputsTable)
         )
         write(controlOutput,
             "Controls:",
-            1, 2, "centre"
+            1, 2, "center"
         )
         
         renderButtons(controlOutput, buttons)

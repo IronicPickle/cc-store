@@ -124,7 +124,7 @@ function drawHeader()
         true, colors.white
     )
     
-    write(winHeader, name, 0, 2, "centre")
+    write(winHeader, name, 0, 2, "center")
 end
 
 function drawFooter()
@@ -147,12 +147,12 @@ function drawFooter()
     
     write(winFooter,
         msgs[state],
-        0, 2, "centre"
+        0, 2, "center"
     )
     
     write(winFooter,
         "Click to Toggle",
-        0, (winFooter.y - 1), "centre"
+        0, (winFooter.y - 1), "center"
     )
 end
 

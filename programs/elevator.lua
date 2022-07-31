@@ -177,8 +177,8 @@ function drawHeader()
         true, colors.white
     )
     
-    write(winHeader, "Elevator", 0, 2, "centre")
-    write(winHeader, "This Floor: " .. floorName, 0, 4, "centre")
+    write(winHeader, "Elevator", 0, 2, "center")
+    write(winHeader, "This Floor: " .. floorName, 0, 4, "center")
 end
 
 function drawFooter()
@@ -236,7 +236,7 @@ function drawMoving()
         
         write(winMain,
             "Moving to: " .. floor.floorName,
-            0, 2, "centre"
+            0, 2, "center"
         )
         
         for ii = 1, 5, 1 do
@@ -248,7 +248,7 @@ function drawMoving()
             
             write(winMain,
                 dirStr,
-                0, (y + 3), "centre"
+                0, (y + 3), "center"
             )
         end
         

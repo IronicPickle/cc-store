@@ -122,23 +122,23 @@ function M.setupNetwork(modem, channel, deviceData, output)
     output = output or M.setupMonitor(term.native())
     write(output,
         "# Network Setup #",
-        0, 2, "centre"
+        0, 2, "center"
     )
     write(output,
         "Channel: " .. channel,
-        0, 4, "centre"
+        0, 4, "center"
     )
     write(output,
         "No network found",
-        0, 6, "centre"
+        0, 6, "center"
     )
     write(output,
         "Press Enter or Right Click",
-        0, 8, "centre"
+        0, 8, "center"
     )
     write(output,
         "to create a network",
-        0, 9, "centre"
+        0, 9, "center"
     )
     
     modem.open(channel)
@@ -223,23 +223,23 @@ function printNetwork(devices, output)
     output.clear()
     write(output,
         "# Network Setup #",
-        0, 2, "centre"
+        0, 2, "center"
     )
     write(output,
         "Network created",
-        0, 4, "centre"
+        0, 4, "center"
     )
     write(output,
         "Devices on Network: " .. #devices,
-        0, 6, "centre"
+        0, 6, "center"
     )
     write(output,
         "Press Enter or Right Click",
-        0, 8, "centre"
+        0, 8, "center"
     )
     write(output,
         "to continue",
-        0, 9, "centre"
+        0, 9, "center"
     )
 end
 
@@ -247,15 +247,15 @@ function joinNetwork(modem, channel, deviceData, output)
     output.clear()
     write(output,
         "# Network Setup #",
-        0, 2, "centre"
+        0, 2, "center"
     )
     write(output,
         "Network joined",
-        0, 4, "centre"
+        0, 4, "center"
     )
     write(output,
         "Awaiting further response...",
-        0, 6, "centre"
+        0, 6, "center"
     )
     
     while(true) do

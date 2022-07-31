@@ -1,7 +1,7 @@
 -- Exported table
 local M = {}
 
-function M.write(output, text, x, y, centre, textColor, bgColor)
+function M.write(output, text, x, y, align, textColor, bgColor)
     local prevTextColor = output.getTextColor()
     local prevBgColor = output.getBackgroundColor()
     
@@ -13,11 +13,11 @@ function M.write(output, text, x, y, centre, textColor, bgColor)
     end
     
     local len = text:len() - 2
-    if(centre == "centre") then
+    if(align == "center") then
         x = ( ( output.x - len ) / 2 ) + x
-    elseif(centre == "right") then
+    elseif(align == "right") then
         x = output.x - len - x - 1
-    elseif(centre == "left") then 
+    elseif(align == "left") then 
         x = 1 + x
     end
     
@@ -45,6 +45,14 @@ function M.drawBox(output, x, y, dx, dy, filled, bgColor)
     end
     term.redirect(term.native())
     output.setBackgroundColor(prevBgColor)
+end
+
+function M.createButton(output, x, y, xPadding, xPadding, bgColor, textColor, text)
+    local dx = x + text.len() + (xPadding * 2)
+    local dy = y + (xPadding * 2)
+    
+    M.drawBox(output, x, y, dx, dy, true, bgColor)
+    M.write(output, text, x + math.floor(dx / 2), math.floor(dy / 2), nil, textColor, bgColor)
 end
 
 return M

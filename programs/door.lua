@@ -162,7 +162,7 @@ function drawHeader(timeLeft)
         closing = "Sealing"
     }
     
-    write(winHeader, msgs[state], 0, 2, "centre")
+    write(winHeader, msgs[state], 0, 2, "center")
 end
 
 function drawFooter()
@@ -193,7 +193,7 @@ function drawFooter()
     
     write(winFooter,
         msgs[state],
-        0, 3, "centre"
+        0, 3, "center"
     )
 end
 
