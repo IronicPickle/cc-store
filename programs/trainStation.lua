@@ -6,7 +6,6 @@ local setup = require("/lua/lib/setupUtils")
 local stateHandler = require("/lua/lib/stateHandler")
 local network = require("/lua/lib/networkUtils")
 local utils = require("/lua/lib/utils")
-local trainUtils = require("/lua/lib/trains/trainUtils")
 
 -- Args
 local args = { ... }
