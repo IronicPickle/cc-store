@@ -7,7 +7,6 @@ local write = monUtils.write
 local drawBox = monUtils.drawBox
 local fillBackground = monUtils.fillBackground
 local createButton = monUtils.createButton
-local createModal = monUtils.createModal
 local stateHandler = require("/lua/lib/stateHandler")
 local network = require("/lua/lib/networkUtils")
 local utils = require("/lua/lib/utils")
@@ -127,12 +126,14 @@ function drawMain()
 
   local drawFunctions = {
     stations = drawStations,
-    trains = drawTrains,
+    trains = function ()
+      trainUtils.drawTrains(winMain, TRAINS)
+    end,
     schedules = drawSchedules,
   }
 
   drawFunctions[MODE]()
-  
+
 
   while true do
     os.sleep(1)
@@ -145,109 +146,6 @@ function drawStations()
 
   for i, station in pairs(STATIONS) do
     write(winMain, "<#> " .. station.stationName, 3, i * 2 + 1, "left", colors.white)
-  end
-end
-
-function drawTrains()
-  fillBackground(winMain, colors.black)
-  write(winMain, "Trains", 0, 3, "center", colors.white)
-
-  local buttons = {}
-
-  for i, train in pairs(TRAINS) do
-    local y = i * 2 + 6
-
-    write(winMain, "<=> " .. train.name, 3, y, "left", colors.white)
-
-    table.insert(buttons, function ()
-      createButton(winMain, 1, y, 1, 0, "right", colors.white, colors.black, "-", function ()
-        drawDeleteTrain(train.name)
-        return true
-      end)
-    end)
-  end
-
-  function createCreateButton()
-    createButton(winMain, 2, 2, 2, 1, "right", colors.white, colors.black, "+", function ()
-      drawCreateTrain()
-      return true
-    end)
-  end
-
-  parallel.waitForAny(createCreateButton, unpack(buttons))
-
-  drawTrains()
-end
-
-function createTrain(trainName)
-  table.insert(TRAINS, {
-    name = trainName,
-    schedules = {}
-  })
-  stateHandler.updateState("trains", TRAINS)
-end
-
-function deleteTrain(trainName)
-  local _, i = utils.findInTable(TRAINS, function (train)
-    return train.name == trainName
-  end)
-  if i then table.remove(TRAINS, i) end
-  stateHandler.updateState("trains", TRAINS)
-end
-
-function drawCreateTrain()
-
-  local trainName = "Unnamed"
-  local action = nil
-  local checkIsValid = function ()
-    return utils.findInTable(TRAINS, function (train)
-      return train.name == trainName
-    end) == nil
-  end
-  
-  
-  local modalBody, awaitButtonInput = createModal(winMain, "Create a Train", colors.black, colors.white, colors.lightGray, nil, "Create")
-
-  function readTrainName()
-    local isValid = checkIsValid()
-
-    fillBackground(modalBody, colors.white)
-    write(modalBody, "Type a name for the train into the terminal", 0, (modalBody.y / 2) - 3, "center", colors.black)
-    write(modalBody, "Current Name:", 0, (modalBody.y / 2) + 1, "center", colors.black)
-    write(modalBody, trainName, 0, (modalBody.y / 2) + 3, "center", colors.black)
-
-    if not isValid then
-      write(modalBody, "This name is already taken", 0, (modalBody.y / 2) + 5, "center", colors.red)
-    end
-
-    print("Train Name: ")
-    trainName = read()
-  end
-
-  while true do
-    parallel.waitForAny(readTrainName, function ()
-      action = awaitButtonInput(not checkIsValid())
-    end)
-    if action then break end;
-  end
-
-
-  if action == "submit" then
-    createTrain(trainName)
-  end
-end
-
-function drawDeleteTrain(trainName)
-  local modalBody, awaitButtonInput = createModal(winMain, "Delete a Train", colors.black, colors.white, colors.lightGray, nil, "Delete")
-
-  fillBackground(modalBody, colors.white)
-  write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
-  write(modalBody, trainName, 0, (modalBody.y / 2) + 2, "center", colors.black)
-
-  local action = awaitButtonInput()
-
-  if action == "submit" then
-    deleteTrain(trainName)
   end
 end
 

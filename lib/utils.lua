@@ -27,7 +27,7 @@ end
 function M.findInTable(tab, func)
   for i=1, #tab do
     if func(tab[i]) then
-      return tab[i]
+      return tab[i], i
     end
   end
   return nil
