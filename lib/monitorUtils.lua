@@ -1,3 +1,6 @@
+-- Libraries
+local setup = require("/lua/lib/setupUtils")
+
 -- Exported table
 local M = {}
 
@@ -47,7 +50,7 @@ function M.drawBox(output, x, y, dx, dy, filled, bgColor)
     output.setBackgroundColor(prevBgColor)
 end
 
-function M.createButton(output, x, y, paddingX, paddingY, align, bgColor, textColor, text, onClick)
+function M.createButton(output, x, y, paddingX, paddingY, align, bgColor, textColor, text, onClick, disabled)
     local len = text:len()
     
     if(align == "center") then
@@ -73,11 +76,53 @@ function M.createButton(output, x, y, paddingX, paddingY, align, bgColor, textCo
             local touchX = p2 - output.posX + 1
             local touchY = p3 - output.posY + 1
 
-            if touchX >= x and touchY >= y and touchX <= dx and touchY <= dy then
+            if touchX >= x and touchY >= y and touchX <= dx and touchY <= dy and not disabled then
                 if onClick() then break end
             end
         end
     end
 end
 
+function M.fillBackground(output, bgColor)
+    output.bg = bgColor
+    output.setBackgroundColor(output.bg)
+  
+    M.drawBox(output,
+        1, 1, output.x, output.y,
+        true
+    )
+end
+
+function M.createModal(output, title, bgColor, textColor, disabledColor, cancelButtonText, submitButtonText)
+    M.fillBackground(output, bgColor)
+    M.write(output, title, 0, 3, "center", textColor)
+
+    local modalInner = setup.setupWindow(
+        output, 2, 6, output.x - 2, output.y - 10
+    )
+
+    local action = nil
+
+    function awaitButtonInput(disabled)
+        function createCancelButton()
+            M.createButton(output, -6, output.y - 3, 2, 1, "center", bgColor, textColor, cancelButtonText or "Cancel", function ()
+            action = "cancel"
+            return true
+            end)
+        end
+        function createSubmitButton()
+            M.createButton(output, 6, output.y - 3, 2, 1, "center", disabled and disabledColor or textColor, bgColor, submitButtonText or "Create", function ()
+            action = "submit"
+            return true
+            end, disabled)
+        end
+        
+        parallel.waitForAny(createCancelButton, createSubmitButton)
+
+        return action
+    end
+
+
+    return modalInner, awaitButtonInput
+end
 return M
