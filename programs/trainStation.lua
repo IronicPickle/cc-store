@@ -41,7 +41,7 @@ end
 
 function joinNetwork()
   local deviceData = {
-    stationName = stationName
+    name = stationName
   }
 
   network.joinOrCreate(channel, false, deviceData)
