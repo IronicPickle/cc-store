@@ -43,7 +43,6 @@ local winMain = setup.setupWindow(
 -- Setup
 local STATIONS = {}
 local TRAINS = stateHandler.getState("trains") or {}
-local SCHEDULES = stateHandler.getState("schedules") or {}
 local MODE = "stations"
 
 function start()
@@ -129,13 +128,13 @@ function drawMain()
 
   local drawFunctions = {
     stations = function ()
-      stationUtils.drawStations(winMain, STATIONS)
+      stationUtils.drawStations(winMain, STATIONS, channel)
     end,
     trains = function ()
       trainUtils.drawTrains(winMain, TRAINS)
     end,
     schedules = function ()
-      scheduleUtils.drawSchedules(winMain, SCHEDULES, TRAINS, STATIONS)
+      scheduleUtils.drawSchedules(winMain, TRAINS, STATIONS)
     end,
   }
 

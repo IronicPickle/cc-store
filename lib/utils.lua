@@ -30,6 +30,14 @@ function M.filterTable(tab, func)
   return newTab
 end
 
+function M.mapTable(tab, func)
+  local newTab = {}
+  for i=1, #tab do
+    newTab[#newTab+1] = func(tab[i], newTab)
+  end
+  return newTab
+end
+
 function M.findInTable(tab, func)
   for i=1, #tab do
     if func(tab[i]) then
@@ -61,6 +69,31 @@ end
 
 function M.capitalize(text)
   return text:gsub("^%l", string.upper)
+end
+
+function M.tableInsertAndShift(tab, newEntry, insertIndex)
+  local length = M.tableLength(tab)
+  if insertIndex == length + 1 or length == 0 then
+    table.insert(tab, newEntry)
+  else
+    local shiftedEntry
+
+    for i in ipairs({table.unpack(tab)}) do
+      if i == insertIndex then
+        local entry = tab[i]
+        tab[i] = newEntry
+        shiftedEntry = entry
+      elseif shiftedEntry then
+        local entry = tab[i]
+        tab[i] = shiftedEntry
+        shiftedEntry = entry
+      end
+    end
+
+    if shiftedEntry then table.insert(tab, shiftedEntry) end
+  end
+
+  return tab
 end
 
 return M

@@ -8,36 +8,52 @@ local utils = require("/lua/lib/utils")
 
 local M = {}
 
-function M.drawSchedules(output, schedules, trains, stations)
+function M.drawSchedules(output, trains, stations)
   while true do
     fillBackground(output, colors.black)
     write(output, "Schedules", 0, 3, "center", colors.white)
 
     local buttons = {}
 
-    for i, schedule in pairs(schedules) do
-      local y = i * 2 + 6
+    local filteredTrains = utils.filterTable(trains, function (train)
+      return train.schedule and utils.tableLength(train.schedule) > 0
+    end)
 
-      write(output, "<=> " .. schedule.name.." ("..schedule.trainName..")", 3, y, "left", colors.white)
+    local noStations = utils.tableLength(stations) == 0
+    local noTrains = utils.tableLength(trains) == 0
+    local noSchedules = utils.tableLength(filteredTrains) == 0
+    if noStations then
+      write(output, "No stations found, connect one to create a schedule.", 0, 7, "center", colors.white, colors.black)
+    elseif noTrains then
+      write(output, "No trains found, add one to create a schedule.", 0, 7, "center", colors.white, colors.black)
+    elseif noSchedules then
+      write(output, "No schedules found, click the plus to add one.", 0, 7, "center", colors.white, colors.black)
+    else
+      for i, train in pairs(filteredTrains) do
+        local y = i * 2 + 6
 
-      table.insert(buttons, function ()
-        createButton(output, 1, y, 1, 0, "right", colors.white, colors.black, "-", function ()
-          drawDeleteSchedule(output, schedule.name, schedules)
-          return true
+        write(output, "<=> " .. train.schedule.name.." ("..train.name..")", 3, y, "left", colors.white)
+
+        table.insert(buttons, function ()
+          createButton(output, 1, y, 1, 0, "right", colors.white, colors.black, "-", function ()
+            drawDeleteSchedule(output, trains, i)
+            return true
+          end)
         end)
-      end)
 
-      table.insert(buttons, function ()
-        createButton(output, 5, y, 1, 0, "right", colors.white, colors.black, "Edit", function ()
-          drawCreateSchedule(output, schedules, trains, stations, schedule)
-          return true
+        table.insert(buttons, function ()
+          createButton(output, 5, y, 1, 0, "right", colors.white, colors.black, "Edit", function ()
+            drawEditSchedule(output, stations, trains, i)
+            return true
+          end)
         end)
-      end)
+      end
     end
 
     function createCreateButton()
-      createButton(output, 2, 2, 2, 1, "right", colors.white, colors.black, "+", function ()
-        drawCreateSchedule(output, schedules, trains, stations)
+      createButton(output, 2, 2, 2, 1, "right", noTrains and colors.lightGray or colors.white, colors.black, "+", function ()
+        if noTrains then return false end
+        drawCreateSchedule(output, stations, trains)
         return true
       end)
     end
@@ -46,48 +62,80 @@ function M.drawSchedules(output, schedules, trains, stations)
   end
 end
 
-function createSchedule(scheduleName, trainName, route, schedules)
-  table.insert(schedules, {
-    name = scheduleName,
-    trainName = trainName,
-    route = route
-  })
-  stateHandler.updateState("schedules", schedules)
+-- Create/Edit Schedule
+
+function updateSchedule(scheduleName, route, trains, i)
+  trains[i].schedule.name = scheduleName
+  trains[i].schedule.route = route
+  stateHandler.updateState("trains", trains)
 end
 
-function drawCreateSchedule(output, schedules, trains, stations, schedule)
-
+function drawCreateSchedule(output, stations, trains, i)
   local action = nil
-  local scheduleName = schedule and schedule.name or nil
-  local trainName = schedule and schedule.trainName or nil
-  local route = schedule and schedule.route or nil
-  
-  if not scheduleName then
-    action, scheduleName = drawNameSchedule(output, schedules)
-    if action == "cancel" then return end
-  end
+  local scheduleName = nil
+  local trainName = nil
+  local route = nil
 
-  if not trainName then
-    action, trainName = drawSelectTrain(output, trains)
-    if action == "cancel" then return end
-  end
-
-  action, route = drawRouteTrain(output, stations, scheduleName, trainName, route)
+  action, scheduleName = drawNameSchedule(output, trains)
   if action == "cancel" then return end
 
-  createSchedule(scheduleName, trainName, route, schedules)
+  action, trainName, i = drawSelectTrain(output, trains)
+  if action == "cancel" then return end
+
+  action, route = drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
+  if action == "cancel" then return end
+
+  updateSchedule(scheduleName, route, trains, i)
 end
 
-function drawNameSchedule(output, schedules)
-  local scheduleName = "Unnamed"
+function drawEditSchedule(output, stations, trains, i)
+  local action = nil
+
+  local schedule = trains[i].schedule
+
+  local scheduleName = schedule.name
+  local trainName = trains[i].name
+  local route = schedule.route
+
+  action, route, scheduleName = drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
+  if action == "cancel" then return end
+
+  updateSchedule(scheduleName, route, trains, i)
+end
+
+-- Delete Schedule
+
+function deleteSchedule(trains, i)
+  trains[i].schedule = {}
+  stateHandler.updateState("trains", trains)
+end
+
+function drawDeleteSchedule(output, trains, i)
+  local modalBody, awaitButtonInput = createModal(output, "Delete a Schedule", colors.black, colors.white, colors.lightGray, nil, "Delete")
+
+  fillBackground(modalBody, colors.white)
+  write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
+  write(modalBody, trains[i].schedule.name, 0, (modalBody.y / 2) + 2, "center", colors.black)
+
+  local action = awaitButtonInput()
+
+  if action == "submit" then
+    deleteSchedule(trains, i)
+  end
+end
+
+-- Schedule Config
+
+function drawNameSchedule(output, trains, prevScheduleName)
+  local scheduleName = prevScheduleName or "Unnamed"
   local action = nil
   local checkIsValid = function ()
-    return utils.findInTable(schedules, function (schedule)
-      return schedule.name == scheduleName
+    return utils.findInTable(trains, function (train)
+      return train.schedule and train.schedule.name == scheduleName and train.schedule.name ~= prevScheduleName
     end) == nil
   end
   
-  local modalBody, awaitButtonInput = createModal(output, "Create a Schedule", colors.black, colors.white, colors.lightGray, nil, "Create")
+  local modalBody, awaitButtonInput = createModal(output, prevScheduleName and "Update " .. prevScheduleName or "Create a Schedule", colors.black, colors.white, colors.lightGray, nil, prevScheduleName and "Update" or "Create")
 
   function readScheduleName()
     local isValid = checkIsValid()
@@ -120,6 +168,7 @@ function drawSelectTrain(output, trains)
 
   local action = nil
   local trainName = nil
+  local trainIndex = nil
   
   local checkIsValid = function ()
     return trainName ~= nil
@@ -131,12 +180,15 @@ function drawSelectTrain(output, trains)
     local buttons = {}
 
     for i, train in ipairs(trains) do
-      table.insert(buttons, function ()
-        createButton(modalBody, 0, i * 2, 1, 0, "center", trainName == train.name and colors.green or colors.black, colors.white, train.name, function ()
-          trainName = train.name
-          return true
+      if not train.schedule or utils.tableLength(train.schedule) == 0 then
+        table.insert(buttons, function ()
+          createButton(modalBody, 0, i * 2, 1, 0, "center", trainName == train.name and colors.green or colors.black, colors.white, train.name, function ()
+            trainName = train.name
+            trainIndex = i
+            return true
+          end)
         end)
-      end)
+      end
     end
   
     parallel.waitForAny(function ()
@@ -144,66 +196,58 @@ function drawSelectTrain(output, trains)
     end, unpack(buttons))
   end
 
-  return action, trainName
+  return action, trainName, trainIndex
 end
 
-function drawRouteTrain(output, stations, scheduleName, trainName, route)
+-- Schedule Utils
+
+function drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
+  local route = trains[i].schedule.route or {}
   local action = nil
-  local route = route or {}
 
   while true do
-    local nestedAction
-    local stationName
-    local delay
+    local entryIndex
 
-    action = drawSchedule(output, scheduleName, trainName, route)
+    action, entryIndex = drawRoute(output, scheduleName, trainName, route)
     if action == "cancel" then break end
 
     if action == "add" then
-      nestedAction, stationName = drawSelectStation(output, stations)
-
-      if nestedAction ~= "cancel" then
-        nestedAction, delay = drawSelectDelay(output, stationName)
-
-        if nestedAction ~= "cancel" then
-          table.insert(route, {
-            stationName = stationName,
-            delay = delay
-          })
-        end
-      end
-    end
-
-    if action == "save" then break end
+      drawAddRouteEntry(output, stations, route, entryIndex)
+    elseif action == "edit" then
+      drawEditRouteEntry(output, stations, route, entryIndex)
+    elseif action == "delete" then
+      drawDeleteRouteEntry(output, route, entryIndex)
+    elseif action == "edit-name" then
+      scheduleName = drawEditScheduleName(output, trains, i)
+    elseif action == "save" then break end
   end
 
-  return action, route
+  return action, route, scheduleName
 end
 
-function drawSchedule(output, scheduleName, trainName, route)
-  local modalBody = createModal(output, "Schedule: "..scheduleName.." for "..trainName, colors.black, colors.white, colors.lightGray, nil, "Continue")
-
+function drawRoute(output, scheduleName, trainName, route)
+  local entryIndex = nil
   local action = nil
 
   function awaitButtonInput(disabled)
     function createCancelButton()
-        createButton(output, -10, output.y - 3, 2, 1, "center", colors.black, colors.white, "Cancel", function ()
-          action = "cancel"
-          return true
-        end)
+      createButton(output, -10, output.y - 3, 2, 1, "center", colors.black, colors.white, "Cancel", function ()
+        action = "cancel"
+        return true
+      end)
     end
     function createSaveButton()
-        createButton(output, 0, output.y - 3, 2, 1, "center", disabled and colors.lightGray or colors.white, colors.black, "Save", function ()
-          if disabled then return false end
-          action = "save"
-          return true
-        end)
+      createButton(output, 0, output.y - 3, 2, 1, "center", disabled and colors.lightGray or colors.white, colors.black, "Save", function ()
+        if disabled then return false end
+        action = "save"
+        return true
+      end)
     end
     function createAddButton()
-        createButton(output, 12, output.y - 3, 2, 1, "center", colors.white, colors.black, "Add Stop", function ()
-          action = "add"
-          return true
-        end)
+      createButton(output, 12, output.y - 3, 2, 1, "center", colors.white, colors.black, "Add Stop", function ()
+        action = "add"
+        return true
+      end)
     end
     
     parallel.waitForAny(createCancelButton, createSaveButton, createAddButton)
@@ -212,33 +256,155 @@ function drawSchedule(output, scheduleName, trainName, route)
   end
 
   while action == nil do
+    local modalBody = createModal(output, "Schedule: "..scheduleName.." for "..trainName, colors.black, colors.white, colors.lightGray, nil, "Continue")
+
     fillBackground(modalBody, colors.white)
 
-    local length = utils.tableLength(route)
-    if length == 0 then
-      write(modalBody, "No stops configured, click add stop to do so", 0, 2, "center", colors.black, colors.white)
+    local buttons = {}
+
+    local noStops = utils.tableLength(route) == 0
+    if noStops then
+      write(modalBody, "No stops configured, click add stop to do so.", 0, 2, "center", colors.black, colors.white)
     else
       for i, entry in ipairs(route) do
-        write(modalBody, "Stops at "..entry.stationName.." for "..entry.delay.." secs", 0, ((i - 1) * 4) + 2, "center", colors.black, colors.white)
-        write(modalBody, "\\/", 0, ((i - 1) * 4) + 4, "center", colors.black, colors.white)
+        local y = ((i - 1) * 4) + 2
+        local entryDesc = "Stops at "..entry.stationName.." for "..entry.delay.." secs"
+        
+        table.insert(buttons, function ()
+          createButton(modalBody, 0, y, 1, 0, "center", colors.black, colors.white, " + ", function ()
+            action = "add"
+            entryIndex = i
+            return true
+          end)
+        end)
+
+        write(modalBody, entryDesc, 0, y + 2, "center", colors.black, colors.white)
+
+        table.insert(buttons, function ()
+          createButton(modalBody, 1, y + 2, 1, 0, "right", colors.black, colors.white, "-", function ()
+            action = "delete"
+            entryIndex = i
+            return true
+          end)
+        end)
+
+        table.insert(buttons, function ()
+          createButton(modalBody, 5, y + 2, 1, 0, "right", colors.black, colors.white, "Edit", function ()
+            action = "edit"
+            entryIndex = i
+            return true
+          end)
+        end)
+
+        table.insert(buttons, function ()
+          createButton(modalBody, 2, 2, 1, 0, "left", colors.black, colors.white, "Edit Name", function ()
+            action = "edit-name"
+            return true
+          end)
+        end)
 
         if i == length then
-          write(modalBody, "# Train Terminates #", 0, ((i - 1) * 4) + 6, "center", colors.black, colors.white)
+          write(modalBody, "# Train Terminates #", 0, y + 5, "center", colors.black, colors.white)
         end
       end
     end
   
-    action = awaitButtonInput(length == 0)
+    parallel.waitForAny(function ()
+      entryIndex = nil
+      action = awaitButtonInput(length == 0)
+    end, unpack(buttons))
   end
 
-  return action
+  return action, entryIndex
 end
 
-function drawSelectStation(output, stations)
+-- Edit Schedule Name
+
+function drawEditScheduleName(output, trains, i)
+  local action, scheduleName = drawNameSchedule(output, trains, trains[i].schedule.name)
+
+  if action == "submit" then
+    return scheduleName
+  end
+
+  return trains[i].schedule.name
+end
+
+-- Add Route Entry
+
+function addRouteEntry(route, stationName, delay, i)
+  utils.tableInsertAndShift(route, {
+    stationName = stationName,
+    delay = delay
+  }, i or utils.tableLength(route) + 1)
+end
+
+function drawAddRouteEntry(output, stations, route, i)
+  local action
+  local stationName
+  local delay
+
+  action, stationName = drawSelectStation(output, stations)
+
+  if action == "cancel" then return end
+
+  action, delay = drawSelectDelay(output, stationName)
+
+  addRouteEntry(route, stationName, delay, i)
+end
+
+-- Edit Route Entry
+
+function editRouteEntry(route, stationName, delay, i)
+  route[i] = {
+    stationName = stationName,
+    delay = delay
+  }
+end
+
+function drawEditRouteEntry(output, stations, route, i)
+  local action
+  local stationName
+  local delay
+
+  action, stationName = drawSelectStation(output, stations, route[i].stationName)
+
+  if action == "cancel" then return end
+
+  action, delay = drawSelectDelay(output, stationName, route[i].delay)
+
+  editRouteEntry(route, stationName, delay, i)
+end
+
+-- Delete Route Entry
+
+function deleteRouteEntry(route, i)
+  table.remove(route, i)
+end
+
+function drawDeleteRouteEntry(output, route, i)
+  local entry = route[i]
+
+  local modalBody, awaitButtonInput = createModal(output, "Delete a Route Entry", colors.black, colors.white, colors.lightGray, nil, "Delete")
+
+  fillBackground(modalBody, colors.white)
+  write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
+  write(modalBody, entry.stationName, 0, (modalBody.y / 2) + 2, "center", colors.black)
+
+  local action = awaitButtonInput()
+
+  if action == "submit" then
+    deleteRouteEntry(route, i)
+  end
+end
+
+-- Route Utils
+
+function drawSelectStation(output, stations, prevStationName)
   local modalBody, awaitButtonInput = createModal(output, "Select a station", colors.black, colors.white, colors.lightGray, nil, "Continue")
 
   local action = nil
-  local stationName = nil
+  local stationName = prevStationName or nil
   
   local checkIsValid = function ()
     return stationName ~= nil
@@ -266,8 +432,8 @@ function drawSelectStation(output, stations)
   return action, stationName
 end
 
-function drawSelectDelay(output, stationName)
-  local delay = 10
+function drawSelectDelay(output, stationName, prevDelay)
+  local delay = prevDelay or 10
   local action = nil
   local checkIsValid = function ()
     return delay ~= nil
@@ -299,28 +465,6 @@ function drawSelectDelay(output, stationName)
   end
 
   return action, delay
-end
-
-function deleteSchedule(scheduleName, schedules)
-  local _, i = utils.findInTable(schedules, function (schedule)
-    return schedule.name == scheduleName
-  end)
-  if i then table.remove(schedules, i) end
-  stateHandler.updateState("schedules", schedules)
-end
-
-function drawDeleteSchedule(output, scheduleName, schedules)
-  local modalBody, awaitButtonInput = createModal(output, "Delete a Schedule", colors.black, colors.white, colors.lightGray, nil, "Delete")
-
-  fillBackground(modalBody, colors.white)
-  write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
-  write(modalBody, scheduleName, 0, (modalBody.y / 2) + 2, "center", colors.black)
-
-  local action = awaitButtonInput()
-
-  if action == "submit" then
-    deleteSchedule(scheduleName, schedules)
-  end
 end
 
 return M

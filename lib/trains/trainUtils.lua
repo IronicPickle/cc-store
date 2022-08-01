@@ -15,17 +15,29 @@ function M.drawTrains(output, trains)
 
     local buttons = {}
 
-    for i, train in pairs(trains) do
-      local y = i * 2 + 6
+    local noTrains = utils.tableLength(trains) == 0
+    if noTrains then
+      write(output, "No trains found, click the plus to add one.", 0, 7, "center", colors.white, colors.black)
+    else
+      for i, train in pairs(trains) do
+        local y = i * 2 + 6
 
-      write(output, "<=> " .. train.name, 3, y, "left", colors.white)
+        write(output, "<=> " .. train.name, 3, y, "left", colors.white)
 
-      table.insert(buttons, function ()
-        createButton(output, 1, y, 1, 0, "right", colors.white, colors.black, "-", function ()
-          drawDeleteTrain(output, train.name, trains)
-          return true
+        table.insert(buttons, function ()
+          createButton(output, 1, y, 1, 0, "right", colors.white, colors.black, "-", function ()
+            drawDeleteTrain(output, trains, i)
+            return true
+          end)
         end)
-      end)
+
+        table.insert(buttons, function ()
+          createButton(output, 5, y, 1, 0, "right", colors.white, colors.black, "Edit", function ()
+            drawEditTrain(output, trains, i)
+            return true
+          end)
+        end)
+      end
     end
 
     function createCreateButton()
@@ -39,33 +51,73 @@ function M.drawTrains(output, trains)
   end
 end
 
+-- Create Train
+
 function createTrain(trainName, trains)
   table.insert(trains, {
     name = trainName,
-    schedules = {}
+    schedule = {}
   })
   stateHandler.updateState("trains", trains)
 end
 
-function deleteTrain(trainName, trains)
-  local _, i = utils.findInTable(trains, function (train)
-    return train.name == trainName
-  end)
+function drawCreateTrain(output, trains)
+  local action, trainName = drawNameTrain(output, trains)
+
+  if action == "submit" then
+    createTrain(trainName, trains)
+  end
+end
+
+-- Edit Train
+
+function editTrain(trainName, trains, i)
+  trains[i].name = trainName
+  stateHandler.updateState("trains", trains)
+end
+
+function drawEditTrain(output, trains, i)
+  local action, trainName = drawNameTrain(output, trains, trains[i].name)
+
+  if action == "submit" then
+    editTrain(trainName, trains, i)
+  end
+end
+
+-- Delete Train
+
+function deleteTrain(i, trains)
   if i then table.remove(trains, i) end
   stateHandler.updateState("trains", trains)
 end
 
-function drawCreateTrain(output, trains)
-  local trainName = "Unnamed"
+function drawDeleteTrain(output, trains, i)
+  local modalBody, awaitButtonInput = createModal(output, "Delete a Train", colors.black, colors.white, colors.lightGray, nil, "Delete")
+
+  fillBackground(modalBody, colors.white)
+  write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
+  write(modalBody, trains[i].name, 0, (modalBody.y / 2) + 2, "center", colors.black)
+
+  local action = awaitButtonInput()
+
+  if action == "submit" then
+    deleteTrain(i, trains)
+  end
+end
+
+-- Train Utils
+
+function drawNameTrain(output, trains, prevTrainName)
+  local trainName = prevTrainName or "Unnamed"
   local action = nil
+
   local checkIsValid = function ()
     return utils.findInTable(trains, function (train)
-      return train.name == trainName
+      return train.name == trainName and train.name ~= prevTrainName
     end) == nil
   end
   
-  
-  local modalBody, awaitButtonInput = createModal(output, "Create a Train", colors.black, colors.white, colors.lightGray, nil, "Create")
+  local modalBody, awaitButtonInput = createModal(output, prevTrainName and "Update "..prevTrainName or "Create a Train", colors.black, colors.white, colors.lightGray, nil, prevName and "Update" or "Create")
 
   function readTrainName()
     local isValid = checkIsValid()
@@ -90,24 +142,7 @@ function drawCreateTrain(output, trains)
     if action then break end;
   end
 
-
-  if action == "submit" then
-    createTrain(trainName, trains)
-  end
-end
-
-function drawDeleteTrain(output, trainName, trains)
-  local modalBody, awaitButtonInput = createModal(output, "Delete a Train", colors.black, colors.white, colors.lightGray, nil, "Delete")
-
-  fillBackground(modalBody, colors.white)
-  write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
-  write(modalBody, trainName, 0, (modalBody.y / 2) + 2, "center", colors.black)
-
-  local action = awaitButtonInput()
-
-  if action == "submit" then
-    deleteTrain(trainName, trains)
-  end
+  return action, trainName
 end
 
 return M
