@@ -93,7 +93,7 @@ function M.fillBackground(output, bgColor)
     )
 end
 
-function M.createModal(output, title, bgColor, textColor, disabledColor, cancelButtonText, submitButtonText)
+function M.createModal(output, title, bgColor, textColor, disabledColor, cancelButtonText, submitButtonText, buttons)
     M.fillBackground(output, bgColor)
     M.write(output, title, 0, 3, "center", textColor)
 
@@ -103,25 +103,28 @@ function M.createModal(output, title, bgColor, textColor, disabledColor, cancelB
 
     local action = nil
 
-    function awaitButtonInput(disabled)
-        function createCancelButton()
-            M.createButton(output, -6, output.y - 3, 2, 1, "center", bgColor, textColor, cancelButtonText or "Cancel", function ()
-            action = "cancel"
-            return true
-            end)
-        end
-        function createSubmitButton()
-            M.createButton(output, 6, output.y - 3, 2, 1, "center", disabled and disabledColor or textColor, bgColor, submitButtonText or "Create", function ()
-            action = "submit"
-            return true
-            end, disabled)
-        end
-        
-        parallel.waitForAny(createCancelButton, createSubmitButton)
+    local awaitButtonInput = buttons
 
-        return action
+    if not awaitButtonInput then
+        awaitButtonInput = function(disabled)
+            function createCancelButton()
+                M.createButton(output, -6, output.y - 3, 2, 1, "center", bgColor, textColor, cancelButtonText or "Cancel", function ()
+                action = "cancel"
+                return true
+                end)
+            end
+            function createSubmitButton()
+                M.createButton(output, 6, output.y - 3, 2, 1, "center", disabled and disabledColor or textColor, bgColor, submitButtonText or "Create", function ()
+                action = "submit"
+                return true
+                end, disabled)
+            end
+            
+            parallel.waitForAny(createCancelButton, createSubmitButton)
+
+            return action
+        end
     end
-
 
     return modalInner, awaitButtonInput
 end

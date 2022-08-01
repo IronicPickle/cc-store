@@ -68,19 +68,19 @@ function M.setupMonitor(monitor, scale)
     
 end
 
-function M.setupWindow(monitor, x, y, width, height)
+function M.setupWindow(output, x, y, width, height)
     local win = window.create(
-        monitor, x or 1, y or 1,
-        width or monitor.x,
-        height or monitor.y
+        output, x or 1, y or 1,
+        width or output.x,
+        height or output.y
     )
     win.setCursorPos(2, 2)
     local resX, resY = win.getSize()
     win.x = resX
     win.y = resY
-    win.posX = x
-    win.posY = y
-    
+    win.posX = x + ((output.posX and output.posX - 1) or 0)
+    win.posY = y + ((output.posY and output.posY - 1) or 0)
+
     return win
     
 end

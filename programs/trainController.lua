@@ -11,6 +11,8 @@ local stateHandler = require("/lua/lib/stateHandler")
 local network = require("/lua/lib/networkUtils")
 local utils = require("/lua/lib/utils")
 local trainUtils = require("/lua/lib/trains/trainUtils")
+local stationUtils = require("/lua/lib/trains/stationUtils")
+local scheduleUtils = require("/lua/lib/trains/scheduleUtils")
 
 -- Args
 local args = { ... }
@@ -41,6 +43,7 @@ local winMain = setup.setupWindow(
 -- Setup
 local STATIONS = {}
 local TRAINS = stateHandler.getState("trains") or {}
+local SCHEDULES = stateHandler.getState("schedules") or {}
 local MODE = "stations"
 
 function start()
@@ -50,7 +53,7 @@ end
 function joinNetwork()
   network.joinOrCreate(channel, true, nil, function (devices)
     STATIONS = devices;
-    if MODE == "stations" then drawStations() end
+    if MODE == "stations" then stationUtils.drawStations(winMain, STATIONS) end
   end)
 end
 
@@ -125,11 +128,15 @@ end
 function drawMain()
 
   local drawFunctions = {
-    stations = drawStations,
+    stations = function ()
+      stationUtils.drawStations(winMain, STATIONS)
+    end,
     trains = function ()
       trainUtils.drawTrains(winMain, TRAINS)
     end,
-    schedules = drawSchedules,
+    schedules = function ()
+      scheduleUtils.drawSchedules(winMain, SCHEDULES, TRAINS, STATIONS)
+    end,
   }
 
   drawFunctions[MODE]()
@@ -141,13 +148,7 @@ function drawMain()
 
 end
 
-function drawStations()
-  fillBackground(winMain, colors.black)
 
-  for i, station in pairs(STATIONS) do
-    write(winMain, "<#> " .. station.stationName, 3, i * 2 + 1, "left", colors.white)
-  end
-end
 
 function drawSchedules()
   fillBackground(winMain, colors.black)

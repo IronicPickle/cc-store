@@ -9,34 +9,34 @@ local utils = require("/lua/lib/utils")
 local M = {}
 
 function M.drawTrains(output, trains)
-  fillBackground(output, colors.black)
-  write(output, "Trains", 0, 3, "center", colors.white)
+  while true do
+    fillBackground(output, colors.black)
+    write(output, "Trains", 0, 3, "center", colors.white)
 
-  local buttons = {}
+    local buttons = {}
 
-  for i, train in pairs(trains) do
-    local y = i * 2 + 6
+    for i, train in pairs(trains) do
+      local y = i * 2 + 6
 
-    write(output, "<=> " .. train.name, 3, y, "left", colors.white)
+      write(output, "<=> " .. train.name, 3, y, "left", colors.white)
 
-    table.insert(buttons, function ()
-      createButton(output, 1, y, 1, 0, "right", colors.white, colors.black, "-", function ()
-        drawDeleteTrain(output, train.name, trains)
+      table.insert(buttons, function ()
+        createButton(output, 1, y, 1, 0, "right", colors.white, colors.black, "-", function ()
+          drawDeleteTrain(output, train.name, trains)
+          return true
+        end)
+      end)
+    end
+
+    function createCreateButton()
+      createButton(output, 2, 2, 2, 1, "right", colors.white, colors.black, "+", function ()
+        drawCreateTrain(output, trains)
         return true
       end)
-    end)
+    end
+
+    parallel.waitForAny(createCreateButton, unpack(buttons))
   end
-
-  function createCreateButton()
-    createButton(output, 2, 2, 2, 1, "right", colors.white, colors.black, "+", function ()
-      drawCreateTrain(output, trains)
-      return true
-    end)
-  end
-
-  parallel.waitForAny(createCreateButton, unpack(buttons))
-
-  M.drawTrains(output, trains)
 end
 
 function createTrain(trainName, trains)
@@ -48,7 +48,7 @@ function createTrain(trainName, trains)
 end
 
 function deleteTrain(trainName, trains)
-  local test, i = utils.findInTable(trains, function (train)
+  local _, i = utils.findInTable(trains, function (train)
     return train.name == trainName
   end)
   if i then table.remove(trains, i) end
