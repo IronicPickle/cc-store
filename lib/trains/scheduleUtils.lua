@@ -214,7 +214,7 @@ function drawSchedule(output, scheduleName, trainName, route)
   while action == nil do
     fillBackground(modalBody, colors.white)
 
-    local length = utils.tablelength(route)
+    local length = utils.tableLength(route)
     if length == 0 then
       write(modalBody, "No stops configured, click add stop to do so", 0, 2, "center", colors.black, colors.white)
     else
