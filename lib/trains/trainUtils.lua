@@ -117,7 +117,7 @@ function drawNameTrain(output, trains, prevTrainName)
     end) == nil
   end
   
-  local modalBody, awaitButtonInput = createModal(output, prevTrainName and "Update "..prevTrainName or "Create a Train", colors.black, colors.white, colors.lightGray, nil, prevName and "Update" or "Create")
+  local modalBody, awaitButtonInput = createModal(output, prevTrainName and "Update "..prevTrainName or "Create a Train", colors.black, colors.white, colors.lightGray, nil, prevTrainName and "Update" or "Create")
 
   function readTrainName()
     local isValid = checkIsValid()

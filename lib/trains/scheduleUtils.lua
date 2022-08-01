@@ -82,7 +82,7 @@ function drawCreateSchedule(output, stations, trains, i)
   action, trainName, i = drawSelectTrain(output, trains)
   if action == "cancel" then return end
 
-  action, route = drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
+  action, route, scheduleName = drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
   if action == "cancel" then return end
 
   updateSchedule(scheduleName, route, trains, i)
@@ -218,7 +218,7 @@ function drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
     elseif action == "delete" then
       drawDeleteRouteEntry(output, route, entryIndex)
     elseif action == "edit-name" then
-      scheduleName = drawEditScheduleName(output, trains, i)
+      scheduleName = drawEditScheduleName(output, trains, scheduleName)
     elseif action == "save" then break end
   end
 
@@ -262,9 +262,10 @@ function drawRoute(output, scheduleName, trainName, route)
 
     local buttons = {}
 
-    local noStops = utils.tableLength(route) == 0
+    local length = utils.tableLength(route)
+    local noStops = length == 0
     if noStops then
-      write(modalBody, "No stops configured, click add stop to do so.", 0, 2, "center", colors.black, colors.white)
+      write(modalBody, "No stops configured, click add stop to do so.", 0, 4, "center", colors.black, colors.white)
     else
       for i, entry in ipairs(route) do
         local y = ((i - 1) * 4) + 2
@@ -296,18 +297,18 @@ function drawRoute(output, scheduleName, trainName, route)
           end)
         end)
 
-        table.insert(buttons, function ()
-          createButton(modalBody, 2, 2, 1, 0, "left", colors.black, colors.white, "Edit Name", function ()
-            action = "edit-name"
-            return true
-          end)
-        end)
-
         if i == length then
           write(modalBody, "# Train Terminates #", 0, y + 5, "center", colors.black, colors.white)
         end
       end
     end
+    
+    table.insert(buttons, function ()
+      createButton(modalBody, 2, 2, 1, 0, "left", colors.black, colors.white, "Edit Name", function ()
+        action = "edit-name"
+        return true
+      end)
+    end)
   
     parallel.waitForAny(function ()
       entryIndex = nil
@@ -320,14 +321,14 @@ end
 
 -- Edit Schedule Name
 
-function drawEditScheduleName(output, trains, i)
-  local action, scheduleName = drawNameSchedule(output, trains, trains[i].schedule.name)
+function drawEditScheduleName(output, trains, scheduleName)
+  local action, scheduleName = drawNameSchedule(output, trains, scheduleName)
 
   if action == "submit" then
     return scheduleName
   end
 
-  return trains[i].schedule.name
+  return scheduleName or "Unnamed"
 end
 
 -- Add Route Entry
