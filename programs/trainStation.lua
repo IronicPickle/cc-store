@@ -85,12 +85,7 @@ function await()
       goToFallbackDestination()
     elseif nextRouteEntry == false then
       print("> " .. CURR_TRAIN.name .. " has no schedule!")
-      if isFallback then
-        print("> Waiting before re-checking schedule")
-        os.sleep(10)
-      else
-        goToFallbackDestination()
-      end
+      goToFallbackDestination()
     elseif nextRouteEntry == nil then
       print("> " .. CURR_TRAIN.name .. " should not be at this station!")
       local nextDestination = getDestination(CURR_TRAIN.schedule.route[1].stationName)
@@ -227,6 +222,12 @@ function getDestinations()
 end
 
 function goToFallbackDestination()
+  if isFallback then
+    print("> Waiting before re-checking train and schedule")
+    os.sleep(10)
+    return
+  end
+
   local fallbackStation = getFallbackStation()
   local nextDestination = fallbackStation and getDestination(fallbackStation.name) or nil
   local trainName = CURR_TRAIN.name or "Unknown Train"
