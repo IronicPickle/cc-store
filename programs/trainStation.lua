@@ -235,7 +235,7 @@ function goToFallbackDestination()
     print("> Unable to send " .. trainName .. " to fallback station, awaiting manual train removal.")
     awaitTrainDeparture()
   else
-    print("> Sending " .. CURR_TRAIN.name .. " to fallback station...")
+    print("> Sending " .. trainName .. " to fallback station...")
     goToDesination(nextDestination)
   end
 end
