@@ -449,7 +449,7 @@ function drawSelectStation(output, allStations, route, routeIndex, prevStationNa
   local stations = getAvailableStations(lastRouteEntry and lastRouteEntry.stationName, allStations)
   local filteredStations = utils.filterTable(stations, function (station)
     return utils.findInTable(route, function (entry)
-      return entry.stationName == station.name
+      return entry.stationName == station.name or station.isFallback
     end) == nil
   end)
 
