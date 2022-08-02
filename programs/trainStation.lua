@@ -230,7 +230,7 @@ function goToFallbackDestination()
 
   local fallbackStation = getFallbackStation()
   local nextDestination = fallbackStation and getDestination(fallbackStation.name) or nil
-  local trainName = CURR_TRAIN.name or "Unknown Train"
+  local trainName = CURR_TRAIN and CURR_TRAIN.name or "Unknown Train"
   if not nextDestination then
     print("> Unable to send " .. trainName .. " to fallback station, awaiting manual train removal.")
     awaitTrainDeparture()
