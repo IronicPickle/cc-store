@@ -52,8 +52,10 @@ function await()
 
     local nextRouteEntry = getNextRouteEntry()
 
-    if not nextRouteEntry then
+    if not CURR_TRAIN then
       print("> Unknown Train arrived!")
+    elseif not nextRouteEntry then
+      print("> This train should not be at this station, sending to first station in schedule")
     else
       print("> " .. CURR_TRAIN.name .. " has arrived" .. "\n")
 
@@ -128,7 +130,7 @@ function getNextRouteEntry()
   local route = CURR_TRAIN.schedule.route
 
   local _, i = getCurrentRouteEntry()
-  if not i then return nil end
+  if not i then return route[1], 1 end
 
   if i == utils.tableLength(route) then
     i = 1
