@@ -43,14 +43,14 @@ function M.drawSchedules(output, trains, stations, modem, channel)
 
         table.insert(buttons, function ()
           createButton(output, 1, y, 1, 0, "right", colors.white, colors.black, "-", function ()
-            drawDeleteSchedule(output, trains, i)
+            drawDeleteSchedule(output, filteredTrains, i)
             return true
           end)
         end)
 
         table.insert(buttons, function ()
           createButton(output, 5, y, 1, 0, "right", colors.white, colors.black, "Edit", function ()
-            drawEditSchedule(output, stations, trains, i)
+            drawEditSchedule(output, stations, filteredTrains, i)
             return true
           end)
         end)
