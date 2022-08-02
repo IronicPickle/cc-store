@@ -69,7 +69,7 @@ function awaitNetwork()
       local train = utils.findInTable(TRAINS, function (train)
         return train.name == trainName
       end)
-
+      os.sleep(0.25)
       modem.transmit(channel, channel, {
         type = "/trains/get/train-res",
         train = train
@@ -149,7 +149,7 @@ function drawMain()
       trainUtils.drawTrains(winMain, TRAINS)
     end,
     schedules = function ()
-      scheduleUtils.drawSchedules(winMain, TRAINS, STATIONS)
+      scheduleUtils.drawSchedules(winMain, TRAINS, STATIONS, modem, channel)
     end,
   }
 
@@ -157,7 +157,7 @@ function drawMain()
 
 
   while true do
-    os.sleep(1)
+    os.pullEvent()
   end
 
 end

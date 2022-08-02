@@ -5,10 +5,17 @@ local createButton = monUtils.createButton
 local createModal = monUtils.createModal
 local stateHandler = require("/lua/lib/stateHandler")
 local utils = require("/lua/lib/utils")
+local network = require("/lua/lib/networkUtils")
+
+local MODEM
+local CHANNEL
 
 local M = {}
 
-function M.drawSchedules(output, trains, stations)
+function M.drawSchedules(output, trains, stations, modem, channel)
+  MODEM = modem
+  CHANNEL = channel
+
   while true do
     fillBackground(output, colors.black)
     write(output, "Schedules", 0, 3, "center", colors.white)
@@ -246,6 +253,7 @@ function drawRoute(output, scheduleName, trainName, route)
     function createAddButton()
       createButton(output, 12, output.y - 3, 2, 1, "center", colors.white, colors.black, "Add Stop", function ()
         action = "add"
+        entryIndex = utils.tableLength(route) + 1
         return true
       end)
     end
@@ -345,7 +353,7 @@ function drawAddRouteEntry(output, stations, route, i)
   local stationName
   local delay
 
-  action, stationName = drawSelectStation(output, stations)
+  action, stationName = drawSelectStation(output, stations, route, i)
 
   if action == "cancel" then return end
 
@@ -368,7 +376,7 @@ function drawEditRouteEntry(output, stations, route, i)
   local stationName
   local delay
 
-  action, stationName = drawSelectStation(output, stations, route[i].stationName)
+  action, stationName = drawSelectStation(output, stations, route, i, route[i].stationName)
 
   if action == "cancel" then return end
 
@@ -401,12 +409,50 @@ end
 
 -- Route Utils
 
-function drawSelectStation(output, stations, prevStationName)
+function getAvailableStations(stationName, allStations)
+  if not stationName then return allStations end
+
+  MODEM.transmit(CHANNEL, CHANNEL, {
+    type = "/trains/get/station-destinations/" .. stationName,
+  })
+
+  local body = network.await("/trains/get/station-destinations-res/" .. stationName)
+  local destinations = body.destinations
+
+  if not destinations then return {} end
+
+  local stations = {}
+  for _, destination in ipairs(destinations) do
+    local station = utils.findInTable(allStations, function (station)
+      return station.name == destination.name
+    end)
+    if station then
+      table.insert(stations, station)
+    end
+  end
+
+  return stations
+end
+
+function drawSelectStation(output, allStations, route, routeIndex, prevStationName)
   local modalBody, awaitButtonInput = createModal(output, "Select a station", colors.black, colors.white, colors.lightGray, nil, "Continue")
 
   local action = nil
   local stationName = prevStationName or nil
+
+  local lastRouteEntryIndex = routeIndex == 1 and utils.tableLength(route) or routeIndex - 1
+  local lastRouteEntry = route[lastRouteEntryIndex]
   
+  fillBackground(modalBody, colors.white)
+  write(output, "Fetching connecting stations...", 0, 7, "center", colors.black, colors.white)
+
+  local stations = getAvailableStations(lastRouteEntry and lastRouteEntry.stationName, allStations)
+  local filteredStations = utils.filterTable(stations, function (station)
+    return utils.findInTable(route, function (entry)
+      return entry.stationName == station.name
+    end) == nil
+  end)
+
   local checkIsValid = function ()
     return stationName ~= nil
   end
@@ -416,15 +462,20 @@ function drawSelectStation(output, stations, prevStationName)
 
     local buttons = {}
 
-    for i, station in ipairs(stations) do
-      table.insert(buttons, function ()
-        createButton(modalBody, 0, i * 2, 1, 0, "center", stationName == station.name and colors.green or colors.black, colors.white, station.name, function ()
-          stationName = station.name
-          return true
+    local noStations = utils.tableLength(filteredStations) == 0
+    if noStations then
+      write(output, "No connecting stations found.", 0, 7, "center", colors.black, colors.white)
+    else
+      for i, station in ipairs(filteredStations) do
+        table.insert(buttons, function ()
+          createButton(modalBody, 0, i * 2, 1, 0, "center", stationName == station.name and colors.green or colors.black, colors.white, station.name, function ()
+            stationName = station.name
+            return true
+          end)
         end)
-      end)
+      end
     end
-  
+    
     parallel.waitForAny(function ()
       action = awaitButtonInput(not checkIsValid())
     end, unpack(buttons))

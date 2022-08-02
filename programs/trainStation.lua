@@ -35,7 +35,7 @@ local DESTINATIONS = {}
 local CURR_TRAIN = nil
 
 function start()
-  parallel.waitForAny(joinNetwork, await)
+  parallel.waitForAny(joinNetwork, awaitNetwork, await)
 end
 
 function joinNetwork()
@@ -46,6 +46,21 @@ function joinNetwork()
   network.joinOrCreate(channel, false, deviceData)
 end
 
+function awaitNetwork()
+  while true do
+    local body = network.await()
+  
+    if(body.type == "/trains/get/station-destinations/" .. stationName) then
+      local destinations = getDestinations()
+      os.sleep(0.25)
+      modem.transmit(channel, channel, {
+        type = "/trains/get/station-destinations-res/" .. stationName,
+        destinations = destinations
+      })
+    end
+  end
+end
+
 function await()
   while true do
     awaitTrain()
@@ -54,8 +69,14 @@ function await()
 
     if not CURR_TRAIN then
       print("> Unknown Train arrived!")
-    elseif not nextRouteEntry then
-      print("> This train should not be at this station, sending to first station in schedule!")
+    elseif nextRouteEntry == false then
+      print("> " .. CURR_TRAIN.name .. " has no schedule, sending to train yard!")
+      while true do
+        os.pullEvent()
+        if not checkIsTrainAtStation() then break end
+      end
+    elseif nextRouteEntry == nil then
+      print("> " .. CURR_TRAIN.name .. " should not be at this station, sending to first station in schedule!")
       local nextDestination = getNextDestination(CURR_TRAIN.schedule.route[1].stationName)
       goToDesination(nextDestination)
     else
@@ -119,7 +140,7 @@ function getTrainInfo(trainName)
 end
 
 function getCurrentRouteEntry()
-  if not CURR_TRAIN then return nil end
+  if not CURR_TRAIN or not CURR_TRAIN.schedule.route then return false end
   local route = CURR_TRAIN.schedule.route
 
   return utils.findInTable(route, function (entry)
@@ -128,7 +149,7 @@ function getCurrentRouteEntry()
 end
 
 function getNextRouteEntry()
-  if not CURR_TRAIN then return nil end
+  if not CURR_TRAIN or not CURR_TRAIN.schedule.route then return false end
   local route = CURR_TRAIN.schedule.route
 
   local _, i = getCurrentRouteEntry()
