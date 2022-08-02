@@ -36,7 +36,6 @@ local CURR_TRAIN = nil
 
 function start()
   parallel.waitForAny(joinNetwork, await)
-
 end
 
 function joinNetwork()
@@ -51,9 +50,22 @@ function await()
   while true do
     awaitTrain()
 
-    print("> " .. CURR_TRAIN .. " has arrived" .. "\n")
+    local nextRouteEntry = getNextRouteEntry()
 
-    goToDesination(selectDestination())
+    if not nextRouteEntry then
+      print("> Unknown Train arrived!")
+    else
+      print("> " .. CURR_TRAIN.name .. " has arrived" .. "\n")
+
+      local nextDestination = getNextDestination(nextRouteEntry.stationName)
+
+      print("> Waiting " .. tostring(nextRouteEntry.delay) .. " seconds")
+      print("> Next Station: " .. nextRouteEntry.stationName .. "\n")
+
+      os.sleep(nextRouteEntry.delay)
+  
+      goToDesination(nextDestination)
+    end
   end
 end
 
@@ -83,16 +95,54 @@ function awaitTrain()
   while true do
     if checkIsTrainAtStation() then
       print("> Detected train at station")
-      CURR_TRAIN = readTransponder()
-      if CURR_TRAIN == nil then
-        print("> Cannot identity train\n")
-        CURR_TRAIN = "Unknown Train"
-      end
+      local trainName = readTransponder()
+      CURR_TRAIN = getTrainInfo(trainName)
       break
     end
-    
+
     os.pullEvent()
   end
+end
+
+function getTrainInfo(trainName)
+  modem.transmit(channel, channel, {
+    type = "/trains/get/train",
+    trainName = trainName
+  })
+
+  local body = network.await("/trains/get/train-res")
+  return body.train
+end
+
+function getCurrentRouteEntry()
+  if not CURR_TRAIN then return nil end
+  local route = CURR_TRAIN.schedule.route
+
+  return utils.findInTable(route, function (entry)
+    return entry.stationName == stationName
+  end)
+end
+
+function getNextRouteEntry()
+  if not CURR_TRAIN then return nil end
+  local route = CURR_TRAIN.schedule.route
+
+  local _, i = getCurrentRouteEntry()
+  if not i then return nil end
+
+  if i == utils.tableLength(route) then
+    i = 1
+  else
+    i = i + 1
+  end
+  return route[i], i
+end
+
+function getNextDestination(trainName)
+  local destinations = getDestinations()
+  return utils.findInTable(destinations, function (destination)
+    return destination.name == trainName
+  end)
 end
 
 function getDestinations()
@@ -112,22 +162,6 @@ function getDestinations()
   end
   
   return DESTINATIONS
-end
-
-function selectDestination()
-  print("# Destinations:")
-
-  getDestinations()
-
-  for k, destination in ipairs(DESTINATIONS) do
-    print(destination.slot .. " - " .. destination.name)
-  end
-
-  print("\n# Select a destination")
-
-  local slot = tonumber(read())
-
-  return utils.findInTable(DESTINATIONS, function(destination) return destination.slot == slot end)
 end
 
 function goToDesination(destination)

@@ -57,9 +57,24 @@ function joinNetwork()
 end
 
 function await()
-  drawAll()
+  parallel.waitForAny(drawAll, awaitNetwork)
+end
+
+function awaitNetwork()
   while true do
-    os.sleep(1)
+    local body = network.await()
+  
+    if(body.type == "/trains/get/train") then
+      local trainName = body.trainName
+      local train = utils.findInTable(TRAINS, function (train)
+        return train.name == trainName
+      end)
+
+      modem.transmit(channel, channel, {
+        type = "/trains/get/train-res",
+        train = train
+      })
+    end
   end
 end
 
@@ -146,8 +161,6 @@ function drawMain()
   end
 
 end
-
-
 
 function drawSchedules()
   fillBackground(winMain, colors.black)
