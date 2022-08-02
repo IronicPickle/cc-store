@@ -34,6 +34,7 @@ local storageInterface = wrappedPers["create:portable_storage_interface"][1]
 -- Setup
 local DESTINATIONS = {}
 local CURR_TRAIN = nil
+local NETWORK_JOINED = false
 
 function start()
   parallel.waitForAny(joinNetwork, awaitNetwork, await)
@@ -45,10 +46,19 @@ function joinNetwork()
     isFallback = isFallback
   }
 
-  network.joinOrCreate(channel, false, deviceData)
+  network.joinOrCreate(channel, false, deviceData, function ()
+    NETWORK_JOINED = true
+  end)
+end
+
+function waitForNetwork()
+  while not NETWORK_JOINED do
+    os.pullEvent()
+  end
 end
 
 function awaitNetwork()
+  waitForNetwork()
   while true do
     local body = network.await()
   
@@ -63,20 +73,8 @@ function awaitNetwork()
   end
 end
 
-function sendToTrainYard()
-  local fallbackStation = getFallbackStation()
-  local nextDestination = fallbackStation and getDestination(fallbackStation.name) or nil
-  local trainName = CURR_TRAIN.name or "Unknown Train"
-  if not nextDestination then
-    print("> Unable to send " .. trainName .. " to fallback station, awaiting manual train removal.")
-    awaitTrainDeparture()
-  else
-    print("> Sending " .. CURR_TRAIN.name .. " to fallback station...")
-    goToDesination(nextDestination)
-  end
-end
-
 function await()
+  waitForNetwork()
   while true do
     awaitTrain()
 
@@ -84,20 +82,20 @@ function await()
 
     if not CURR_TRAIN then
       print("> Unknown Train arrived!")
-      sendToTrainYard()
+      goToFallbackDestination()
     elseif nextRouteEntry == false then
       print("> " .. CURR_TRAIN.name .. " has no schedule!")
       if isFallback then
         print("> Waiting before re-checking schedule")
         os.sleep(10)
       else
-        sendToTrainYard()
+        goToFallbackDestination()
       end
     elseif nextRouteEntry == nil then
       print("> " .. CURR_TRAIN.name .. " should not be at this station!")
       local nextDestination = getDestination(CURR_TRAIN.schedule.route[1].stationName)
       if not nextDestination then
-        sendToTrainYard()
+        goToFallbackDestination()
       else
         print("> Sending " .. CURR_TRAIN.name .. " to first station in schedule...")
         goToDesination(nextDestination)
@@ -226,6 +224,19 @@ function getDestinations()
   end
   
   return DESTINATIONS
+end
+
+function goToFallbackDestination()
+  local fallbackStation = getFallbackStation()
+  local nextDestination = fallbackStation and getDestination(fallbackStation.name) or nil
+  local trainName = CURR_TRAIN.name or "Unknown Train"
+  if not nextDestination then
+    print("> Unable to send " .. trainName .. " to fallback station, awaiting manual train removal.")
+    awaitTrainDeparture()
+  else
+    print("> Sending " .. CURR_TRAIN.name .. " to fallback station...")
+    goToDesination(nextDestination)
+  end
 end
 
 function goToDesination(destination)
