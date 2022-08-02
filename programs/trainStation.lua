@@ -100,6 +100,12 @@ function await()
 
       local nextDestination = getDestination(nextRouteEntry.stationName)
 
+      if not nextDestination then
+        print("> This station cannot send " .. CURR_TRAIN.name .. " to where it " .. nextRouteEntry.stationName .. "!")
+        goToFallbackDestination()
+        return
+      end
+
       print("> Waiting " .. tostring(nextRouteEntry.delay) .. " seconds")
       print("> Next Station: " .. nextRouteEntry.stationName .. "\n")
 
