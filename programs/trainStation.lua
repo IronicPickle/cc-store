@@ -1,5 +1,5 @@
 
---$ARGS|Channel (40)|Station Name (Unnamed)|Status Redstone Input (right)|Train Transponder Item (minecraft:paper)|$ARGS
+--$ARGS|Channel (40)|Station Name (Unnamed)|Status Redstone Input (right)|Train Transponder Item (minecraft:paper)|Is Fallback Station (false)|$ARGS
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
@@ -13,6 +13,7 @@ local channel = tonumber(args[1]) or 40
 local stationName = utils.urlDecode(args[2] or "Unnamed")
 local statusRedstoneInput = args[3] or "right"
 local transponderItem = args[4] or "minecraft:paper"
+local isFallback = args[5] == "true"
 
 -- Peripherals
 local wrappedPers = setup.getPers({
@@ -40,7 +41,8 @@ end
 
 function joinNetwork()
   local deviceData = {
-    name = stationName
+    name = stationName,
+    isFallback = isFallback
   }
 
   network.joinOrCreate(channel, false, deviceData)
@@ -61,6 +63,18 @@ function awaitNetwork()
   end
 end
 
+function sendToTrainYard()
+  local nextDestination = getDestination(getFallbackStation())
+  local trainName = CURR_TRAIN.name or "Unknown Train"
+  if not nextDestination then
+    print("> Unable to send " .. trainName .. " to Train Yard, awaiting manual train removal.")
+    awaitTrainDeparture()
+  else
+    print("> Sending " .. trainName .. " to Train Yard...")
+    goToDesination(nextDestination)
+  end
+end
+
 function await()
   while true do
     awaitTrain()
@@ -69,20 +83,23 @@ function await()
 
     if not CURR_TRAIN then
       print("> Unknown Train arrived!")
+      sendToTrainYard()
     elseif nextRouteEntry == false then
-      print("> " .. CURR_TRAIN.name .. " has no schedule, sending to train yard!")
-      while true do
-        os.pullEvent()
-        if not checkIsTrainAtStation() then break end
+      print("> " .. CURR_TRAIN.name .. " has no schedule!")
+      if isFallback then
+        print("> Waiting before re-checking schedule")
+        os.sleep(10)
+      else
+        sendToTrainYard()
       end
     elseif nextRouteEntry == nil then
       print("> " .. CURR_TRAIN.name .. " should not be at this station, sending to first station in schedule!")
-      local nextDestination = getNextDestination(CURR_TRAIN.schedule.route[1].stationName)
+      local nextDestination = getDestination(CURR_TRAIN.schedule.route[1].stationName)
       goToDesination(nextDestination)
     else
       print("> " .. CURR_TRAIN.name .. " has arrived" .. "\n")
 
-      local nextDestination = getNextDestination(nextRouteEntry.stationName)
+      local nextDestination = getDestination(nextRouteEntry.stationName)
 
       print("> Waiting " .. tostring(nextRouteEntry.delay) .. " seconds")
       print("> Next Station: " .. nextRouteEntry.stationName .. "\n")
@@ -91,6 +108,13 @@ function await()
   
       goToDesination(nextDestination)
     end
+  end
+end
+
+function awaitTrainDeparture()
+  while true do
+    os.pullEvent()
+    if not checkIsTrainAtStation() then break end
   end
 end
 
@@ -129,6 +153,15 @@ function awaitTrain()
   end
 end
 
+function getFallbackStation()
+  modem.transmit(channel, channel, {
+    type = "/trains/get/fallback-station"
+  })
+
+  local body = network.await("/trains/get/fallback-station-res")
+  return body.station
+end
+
 function getTrainInfo(trainName)
   modem.transmit(channel, channel, {
     type = "/trains/get/train",
@@ -163,7 +196,7 @@ function getNextRouteEntry()
   return route[i], i
 end
 
-function getNextDestination(trainName)
+function getDestination(trainName)
   local destinations = getDestinations()
   return utils.findInTable(destinations, function (destination)
     return destination.name == trainName
@@ -197,7 +230,7 @@ function goToDesination(destination)
 
   if checkIsTrainAtStation() then
     print("> Train stalled, waiting...\n")
-    while checkIsTrainAtStation() do os.pullEvent() end
+    awaitTrainDeparture()
   end
 
   print("> Train departed\n")

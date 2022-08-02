@@ -64,7 +64,7 @@ function awaitNetwork()
   while true do
     local body = network.await()
   
-    if(body.type == "/trains/get/train") then
+    if body.type == "/trains/get/train" then
       local trainName = body.trainName
       local train = utils.findInTable(TRAINS, function (train)
         return train.name == trainName
@@ -73,6 +73,15 @@ function awaitNetwork()
       modem.transmit(channel, channel, {
         type = "/trains/get/train-res",
         train = train
+      })
+    elseif body.type == "/trains/get/fallback-station" then
+      local station = utils.findInTable(STATIONS, function (train)
+        return train.isFallback
+      end)
+      os.sleep(0.25)
+      modem.transmit(channel, channel, {
+        type = "/trains/get/fallback-station-res",
+        station = station
       })
     end
   end
