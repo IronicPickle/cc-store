@@ -93,9 +93,14 @@ function await()
         sendToTrainYard()
       end
     elseif nextRouteEntry == nil then
-      print("> " .. CURR_TRAIN.name .. " should not be at this station, sending to first station in schedule!")
+      print("> " .. CURR_TRAIN.name .. " should not be at this station!")
       local nextDestination = getDestination(CURR_TRAIN.schedule.route[1].stationName)
-      goToDesination(nextDestination)
+      if not nextDestination then
+        sendToTrainYard()
+      else
+        print("> Sending " .. CURR_TRAIN.name .. " to first station in schedule!")
+        goToDesination(nextDestination)
+      end
     else
       print("> " .. CURR_TRAIN.name .. " has arrived" .. "\n")
 
