@@ -135,4 +135,19 @@ function M.joinOrCreate(channel, isHost, device, onChange)
 
 end
 
+function M.await(type)
+  while(true) do
+    local event, p1, p2, p3, p4, p5 = os.pullEvent()
+    
+    local isModemMessage = (event == "modem_message")
+    
+    if(isModemMessage) then
+      local body = p4
+      if(not type or body.type == type) then
+        return body
+      end
+    end
+  end
+end
+
 return M
