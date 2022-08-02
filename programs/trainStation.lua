@@ -64,13 +64,14 @@ function awaitNetwork()
 end
 
 function sendToTrainYard()
-  local nextDestination = getDestination(getFallbackStation())
+  local fallbackStation = getFallbackStation()
+  local nextDestination = fallbackStation and getDestination(fallbackStation.name) or nil
   local trainName = CURR_TRAIN.name or "Unknown Train"
   if not nextDestination then
-    print("> Unable to send " .. trainName .. " to Train Yard, awaiting manual train removal.")
+    print("> Unable to send " .. trainName .. " to fallback station, awaiting manual train removal.")
     awaitTrainDeparture()
   else
-    print("> Sending " .. trainName .. " to Train Yard...")
+    print("> Sending " .. CURR_TRAIN.name .. " to fallback station...")
     goToDesination(nextDestination)
   end
 end
@@ -98,7 +99,7 @@ function await()
       if not nextDestination then
         sendToTrainYard()
       else
-        print("> Sending " .. CURR_TRAIN.name .. " to first station in schedule!")
+        print("> Sending " .. CURR_TRAIN.name .. " to first station in schedule...")
         goToDesination(nextDestination)
       end
     else
@@ -228,7 +229,7 @@ function getDestinations()
 end
 
 function goToDesination(destination)
-  print("> Sending train to " .. destination.name .. "\n")
+  print("> Sending train to " .. destination.name .. "...\n")
 
   chest.pushItems(peripheral.getName(trackStation), destination.slot, 1, 1)
   os.sleep(1)
