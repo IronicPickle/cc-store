@@ -163,6 +163,7 @@ function awaitTrain()
 end
 
 function getFallbackStation()
+  print("> Fetching fallback station...\n")
 
   local body = nil
   while not body do
@@ -178,6 +179,7 @@ function getFallbackStation()
 end
 
 function getTrainInfo(trainName)
+  print("> Fetching info for " .. trainName .. "...\n")
 
   local body = nil
   while not body do

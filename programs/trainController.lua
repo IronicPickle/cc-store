@@ -64,8 +64,6 @@ function awaitNetwork()
   while true do
     local body = network.await(nil, false)
 
-    print(body)
-  
     if body.type == "/trains/get/train" then
       local trainName = body.trainName
       local train = utils.findInTable(TRAINS, function (train)
