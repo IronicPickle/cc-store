@@ -60,6 +60,7 @@ function await()
 end
 
 function awaitNetwork()
+  waitForNetwork()
   while true do
     local body = network.await(nil, false)
 
