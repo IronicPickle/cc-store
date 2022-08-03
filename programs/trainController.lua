@@ -43,6 +43,7 @@ local winMain = setup.setupWindow(
 local STATIONS = {}
 local TRAINS = stateHandler.getState("trains") or {}
 local MODE = "stations"
+local NETWORK_JOINED = false
 
 function start()
   parallel.waitForAny(joinNetwork, await)
@@ -50,7 +51,8 @@ end
 
 function joinNetwork()
   network.joinOrCreate(channel, true, nil, function (devices)
-    STATIONS = devices;
+    NETWORK_JOINED = true
+    STATIONS = devices
     if MODE == "stations" then stationUtils.drawStations(winMain, STATIONS) end
   end)
 end
@@ -106,6 +108,12 @@ function awaitNetwork()
     elseif body.type == "/trains/post/train-departed" then
       trainDeparted(body.trainName, body.stationName)
     end
+  end
+end
+
+function waitForNetwork()
+  while not NETWORK_JOINED do
+    os.pullEvent()
   end
 end
 
