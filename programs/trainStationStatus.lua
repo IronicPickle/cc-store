@@ -38,7 +38,9 @@ local winNext = setup.setupWindow(
 
 -- Setup
 local TRAINS = {}
+local PREV_TRAIN = nil
 local CURR_TRAIN = nil
+local CURR_COUNTDOWN = 0
 local NEXT_TRAINS = {}
 
 function start()
@@ -57,6 +59,7 @@ function awaitUpdate()
 
   TRAINS = body.trains
 
+  PREV_TRAIN = CURR_TRAIN
   CURR_TRAIN = getCurrentTrain()
   NEXT_TRAINS = getNextTrains()
 end
@@ -147,6 +150,7 @@ function drawCurrentTrain()
   end
 
   local trainName = CURR_TRAIN and CURR_TRAIN.name or nil
+  local prevTrainName = PREV_TRAIN and PREV_TRAIN.name or nil
 
   if trainName then
     local routeEntry = getRouteEntry(CURR_TRAIN)
@@ -154,7 +158,14 @@ function drawCurrentTrain()
     drawLeftText(trainName)
     
     if routeEntry then
-      for i = routeEntry.delay, 0, -1 do
+      local isNewTrain = prevTrainName ~= trainName
+
+      print(prevTrainName, trainName)
+
+      CURR_COUNTDOWN = isNewTrain and routeEntry.delay or CURR_COUNTDOWN
+
+      for i = CURR_COUNTDOWN, 0, -1 do
+        CURR_COUNTDOWN = i
         fillBackground(winCurr, colors.black)
 
         drawLeftText(trainName)
@@ -164,6 +175,7 @@ function drawCurrentTrain()
       end
     end
   else
+    
     local i = 1
     while true do
       fillBackground(winCurr, colors.black)
