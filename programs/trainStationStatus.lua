@@ -195,9 +195,14 @@ function drawNextStations()
   drawBox(winNext, 1, 1, winNext.x, 1, true, colors.orange)
   write(winNext, "Next Stops", 0, 1, "center", colors.black, colors.orange)
 
-  for i, entry in ipairs(nextStations) do
-    local text = entry.stationName .. " (stops for " .. entry.delay .. "s)"
-    write(winNext, text, 1, i + 2, "left", colors.orange, colors.black)
+  local noStations = utils.tableLength(nextStations) == 0
+  if noStations then
+    write(winNext, "No upcoming stops", 1, 3, "left", colors.orange, colors.black)
+  else
+    for i, entry in ipairs(nextStations) do
+      local text = entry.stationName .. " (stops for " .. entry.delay .. "s)"
+      write(winNext, text, 1, i + 2, "left", colors.orange, colors.black)
+    end
   end
 end
 
@@ -205,13 +210,18 @@ function drawNextTrains()
   drawBox(winNext, 1, 1, winNext.x, 1, true, colors.orange)
   write(winNext, "Next Trains", 0, 1, "center", colors.black, colors.orange)
 
-  for i, train in ipairs(NEXT_TRAINS) do
-    local text = train.name
-    local routeEntry = getRouteEntry(train)
-    if routeEntry then
-      text = text .. " (stops for " .. routeEntry.delay .. "s)"
+  local noTrains = utils.tableLength(NEXT_TRAINS) == 0
+  if noTrains then
+    write(winNext, "No upcoming trains", 1, 3, "left", colors.orange, colors.black)
+  else
+    for i, train in ipairs(NEXT_TRAINS) do
+      local text = train.name
+      local routeEntry = getRouteEntry(train)
+      if routeEntry then
+        text = text .. " (stops for " .. routeEntry.delay .. "s)"
+      end
+      write(winNext, text, 1, i + 2, "left", colors.orange, colors.black)
     end
-    write(winNext, text, 1, i + 2, "left", colors.orange, colors.black)
   end
 end
 
