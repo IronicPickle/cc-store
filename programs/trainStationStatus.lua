@@ -160,8 +160,6 @@ function drawCurrentTrain()
     if routeEntry then
       local isNewTrain = prevTrainName ~= trainName
 
-      print(prevTrainName, trainName)
-
       CURR_COUNTDOWN = isNewTrain and routeEntry.delay or CURR_COUNTDOWN
 
       for i = CURR_COUNTDOWN, 0, -1 do
@@ -172,6 +170,11 @@ function drawCurrentTrain()
 
         write(winCurr, i .. "s", 1, 2, "right", colors.orange, colors.black)
         os.sleep(1)
+      end
+    else
+      while true do
+        write(winCurr, "No Schedule", 1, 2, "right", colors.orange, colors.black)
+        os.sleep(999)
       end
     end
   else
