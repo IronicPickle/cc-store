@@ -66,7 +66,7 @@ end
 
 function getCurrentTrain()
   local train = utils.findInTable(TRAINS, function (train)
-    return train.currentStationName == stationName
+    return train.currentStationName == stationName and train.schedule.route
   end)
 
   return train
@@ -74,7 +74,7 @@ end
 
 function getNextTrains()
   local trains = utils.filterTable(TRAINS, function (train)
-    return train.nextStationName == stationName
+    return train.nextStationName == stationName and train.schedule.route
   end)
 
   return trains
