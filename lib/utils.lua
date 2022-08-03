@@ -96,12 +96,10 @@ function M.tableInsertAndShift(tab, newEntry, insertIndex)
   return tab
 end
 
-function M.tableSplit(tab)
+function M.tableSplit(tab, splitIndex)
   local tab1, tab2 = {}, {}
-  local state = true
   for i, val in pairs(tab) do
-    (state and tab1 or tab2)[i] = val
-    state = not state
+    table.insert(i < splitIndex and tab1 or tab2, val)
   end
   return tab1, tab2
 end
