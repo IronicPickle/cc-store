@@ -62,16 +62,14 @@ function awaitNetwork()
   while true do
     local body = network.await(nil, false)
 
-    if body then
-      if body.type == "/trains/get/station-destinations/" .. stationName then
-        local destinations = getDestinations()
-        os.sleep(0.25)
-        modem.transmit(channel, channel, {
-          type = "/trains/get/station-destinations-res/" .. stationName,
-          destinations = destinations
-        })
-      end
-    end
+    if body.type == "/trains/get/station-destinations/" .. stationName then
+      local destinations = getDestinations()
+      os.sleep(0.25)
+      modem.transmit(channel, channel, {
+        type = "/trains/get/station-destinations-res/" .. stationName,
+        destinations = destinations
+      })
+  end
   end
 end
 
@@ -169,10 +167,11 @@ function getFallbackStation()
   local body = nil
   while not body do
     modem.transmit(channel, channel, {
-      type = "/trains/get/fallback-station"
+      type = "/trains/get/fallback-station",
+      stationName = stationName
     })
 
-    body = network.await("/trains/get/fallback-station-res")
+    body = network.await("/trains/get/fallback-station-res/" .. stationName)
   end
 
   return body.station
@@ -184,10 +183,11 @@ function getTrainInfo(trainName)
   while not body do
     modem.transmit(channel, channel, {
       type = "/trains/get/train",
-      trainName = trainName
+      trainName = trainName,
+      stationName = stationName
     })
 
-    body = network.await("/trains/get/train-res")
+    body = network.await("/trains/get/train-res/" .. stationName)
   end
 
   return body.train

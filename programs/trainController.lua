@@ -63,32 +63,32 @@ end
 function awaitNetwork()
   while true do
     local body = network.await(nil, false)
+
+    print(body)
   
-    if body then
-      if body.type == "/trains/get/train" then
-        local trainName = body.trainName
-        local train = utils.findInTable(TRAINS, function (train)
-          return train.name == trainName
-        end)
-        os.sleep(0.25)
-        modem.transmit(channel, channel, {
-          type = "/trains/get/train-res",
-          train = train
-        })
-      elseif body.type == "/trains/get/fallback-station" then
-        local station = utils.findInTable(STATIONS, function (train)
-          return train.isFallback
-        end)
-        os.sleep(0.25)
-        modem.transmit(channel, channel, {
-          type = "/trains/get/fallback-station-res",
-          station = station
-        })
-      elseif body.type == "/trains/post/train-arrived" then
-        trainArrived(body.trainName, body.stationName)
-      elseif body.type == "/trains/post/train-departed" then
-        trainDeparted(body.trainName, body.stationName)
-      end
+    if body.type == "/trains/get/train" then
+      local trainName = body.trainName
+      local train = utils.findInTable(TRAINS, function (train)
+        return train.name == trainName
+      end)
+      os.sleep(0.25)
+      modem.transmit(channel, channel, {
+        type = "/trains/get/train-res/" .. body.stationName,
+        train = train
+      })
+    elseif body.type == "/trains/get/fallback-station" then
+      local station = utils.findInTable(STATIONS, function (train)
+        return train.isFallback
+      end)
+      os.sleep(0.25)
+      modem.transmit(channel, channel, {
+        type = "/trains/get/fallback-station-res/" .. body.stationName,
+        station = station
+      })
+    elseif body.type == "/trains/post/train-arrived" then
+      trainArrived(body.trainName, body.stationName)
+    elseif body.type == "/trains/post/train-departed" then
+      trainDeparted(body.trainName, body.stationName)
     end
   end
 end

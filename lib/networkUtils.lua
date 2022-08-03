@@ -136,24 +136,27 @@ function M.joinOrCreate(channel, isHost, device, onChange)
 end
 
 function M.await(type, timeout)
-  local body = nil
+  local returnBody = nil
 
   local funcs = {}
 
   table.insert(funcs, function ()
     while true do
       local event, p1, p2, p3, p4, p5 = os.pullEvent()
+
       
       local isModemMessage = (event == "modem_message")
       
       if(isModemMessage) then
         local body = p4
         if(not type or body.type == type) then
-          return body
+          returnBody = body
         end
       end
     end
   end)
+
+  
 
   if timeout ~= false then
     table.insert(funcs, function ()
@@ -163,7 +166,7 @@ function M.await(type, timeout)
 
   parallel.waitForAny(table.unpack(funcs))
 
-  return body
+  return returnBody
 end
 
 function M.transmit(modem, channel, body, timeout)
