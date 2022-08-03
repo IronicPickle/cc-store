@@ -6,6 +6,11 @@ local setup = require("/lua/lib/setupUtils")
 local stateHandler = require("/lua/lib/stateHandler")
 local network = require("/lua/lib/networkUtils")
 local utils = require("/lua/lib/utils")
+local monUtils = require("/lua/lib/monitorUtils")
+local write = monUtils.write
+local drawBox = monUtils.drawBox
+local fillBackground = monUtils.fillBackground
+local createButton = monUtils.createButton
 
 -- Args
 local args = { ... }
@@ -20,7 +25,20 @@ local wrappedPers = setup.getPers({
 local modem = wrappedPers.modem[1]
 local monitor = wrappedPers.monitor[1]
 
+-- Windows
+local winHeader = setup.setupWindow(
+    monitor, 1, 1, monitor.x, 2
+)
+local winMain = setup.setupWindow(
+    monitor, 1, 2, monitor.x, (monitor.y - 2) 
+)
+
+-- Setup
+local CURR_TRAIN = nil
+local NEXT_TRAINS = {}
+
 function start()
+  modem.open(channel)
   parallel.waitForAny(await)
 end
 
@@ -33,10 +51,10 @@ end
 function awaitUpdate()
   network.await("/trains/post/trains-state-update", false)
 
-  local currentTrain = getCurrentTrain()
-  local nextTrains = getNextTrains()
+  CURR_TRAIN = getCurrentTrain()
+  NEXT_TRAINS = getNextTrains()
 
-  print(currentTrain, nextTrains)
+  drawAll()
 end
 
 function getCurrentTrain()
@@ -45,7 +63,7 @@ function getCurrentTrain()
     stationName = stationName
   })
 
-  local body = await("/trains/get/station-current-train-res/" .. stationName)
+  local body = network.await("/trains/get/station-current-train-res/" .. stationName)
 
   return body and body.train or nil
 end
@@ -56,7 +74,36 @@ function getNextTrains()
     stationName = stationName
   })
 
-  local body = await("/trains/get/station-next-trains-res/" .. stationName)
+  local body = network.await("/trains/get/station-next-trains-res/" .. stationName)
 
   return body and body.trains or {}
 end
+
+function drawAll()
+  drawHeader()
+  drawMain()
+end
+
+function drawHeader()
+  winHeader.bg = colors.green
+  winHeader.setBackgroundColor(winHeader.bg)
+  
+  drawBox(winHeader,
+      1, 1, winHeader.x, 1,
+      true
+  )
+  
+  write(winHeader, stationName, 0, 2, "center")
+end
+
+function drawMain()
+  winMain.bg = colors.green
+  winMain.setBackgroundColor(winMain.bg)
+  
+  drawBox(winMain,
+      1, 1, winMain.x, 1,
+      true
+  )
+end
+
+start()
