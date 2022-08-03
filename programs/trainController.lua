@@ -85,23 +85,11 @@ function awaitNetwork()
         type = "/trains/get/fallback-station-res/" .. body.stationName,
         station = station
       })
-    elseif body.type == "/trains/get/station-current-train" then
-      local train = utils.findInTable(TRAINS, function (train)
-        return train.currentStationName == body.stationName
-      end)
+    elseif body.type == "/trains/get/trains" then
       os.sleep(0.25)
       modem.transmit(channel, channel, {
-        type = "/trains/get/station-current-train-res/" .. body.stationName,
-        train = train
-      })
-    elseif body.type == "/trains/get/station-next-trains" then
-      local trains = utils.filterTable(TRAINS, function (train)
-        return train.nextStationName == body.stationName
-      end)
-      os.sleep(0.25)
-      modem.transmit(channel, channel, {
-        type = "/trains/get/station-next-trains-res/" .. body.stationName,
-        trains = trains
+        type = "/trains/get/trains/" .. body.stationName,
+        trains = TRAINS
       })
     elseif body.type == "/trains/post/train-arrived" then
       trainArrived(body.trainName, body.stationName)
@@ -187,7 +175,8 @@ function trainArrived(trainName, stationName)
   local nextStationName = updateTrainsNextStation(trainName, stationName)
 
   modem.transmit(channel, channel, {
-    type = "/trains/post/trains-state-update"
+    type = "/trains/post/trains-state-update",
+    trains = TRAINS
   })
   print("<#> Next station: " .. nextStationName .. "\n")
 end
@@ -199,7 +188,8 @@ function trainDeparted(trainName, stationName)
   local nextStationName = updateTrainsNextStation(trainName, stationName)
 
   modem.transmit(channel, channel, {
-    type = "/trains/post/trains-state-update"
+    type = "/trains/post/trains-state-update",
+    trains = TRAINS
   })
   print("<#> Next station: " .. nextStationName .. "\n")
 end

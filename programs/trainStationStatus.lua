@@ -37,6 +37,7 @@ local winNext = setup.setupWindow(
 )
 
 -- Setup
+local TRAINS = {}
 local CURR_TRAIN = nil
 local NEXT_TRAINS = {}
 
@@ -47,39 +48,33 @@ end
 
 function await()
   while true do
-    awaitUpdate()
+    parallel.waitForAny(awaitUpdate, drawAll)
   end
 end
 
 function awaitUpdate()
-  parallel.waitForAny(drawAll, function ()
-    network.await("/trains/post/trains-state-update", false)
-  end)
+  local body = network.await("/trains/post/trains-state-update", false)
+
+  TRAINS = body.trains
 
   CURR_TRAIN = getCurrentTrain()
   NEXT_TRAINS = getNextTrains()
 end
 
 function getCurrentTrain()
-  modem.transmit(channel, channel, {
-    type = "/trains/get/station-current-train",
-    stationName = stationName
-  })
+  local train = utils.findInTable(TRAINS, function (train)
+    return train.currentStationName == stationName
+  end)
 
-  local body = network.await("/trains/get/station-current-train-res/" .. stationName)
-
-  return body and body.train or nil
+  return train
 end
 
 function getNextTrains()
-  modem.transmit(channel, channel, {
-    type = "/trains/get/station-next-trains",
-    stationName = stationName
-  })
+  local trains = utils.filterTable(TRAINS, function (train)
+    return train.nextStationName == stationName
+  end)
 
-  local body = network.await("/trains/get/station-next-trains-res/" .. stationName)
-
-  return body and body.trains or {}
+  return trains
 end
 
 function getRouteEntry(train)
