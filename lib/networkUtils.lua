@@ -136,6 +136,8 @@ function M.joinOrCreate(channel, isHost, device, onChange)
 end
 
 function M.await(type, timeout)
+  local body = nil
+
   parallel.waitForAny(function ()
     while true do
       local event, p1, p2, p3, p4, p5 = os.pullEvent()
@@ -152,6 +154,8 @@ function M.await(type, timeout)
   end, function ()
     os.sleep(timeout or 5)
   end)
+
+  return body
 end
 
 function M.transmit(modem, channel, body, timeout)
