@@ -83,8 +83,21 @@ function awaitNetwork()
         type = "/trains/get/fallback-station-res",
         station = station
       })
+    elseif body.type == "/trains/post/train-arrived" then
+      trainArrived(body.trainName, body.stationName)
+    elseif body.type == "/trains/post/train-departed" then
+      trainDeparted(body.trainName, body.stationName)
     end
   end
+end
+
+function trainArrived(trainName, stationName)
+  print("> " .. trainName .. " arrived at " .. stationName .. ".")
+end
+
+function trainDeparted(trainName, stationName)
+  
+  print("> " .. trainName .. " departed from " .. stationName .. ".")
 end
 
 function drawAll()

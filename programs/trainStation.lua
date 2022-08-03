@@ -80,6 +80,10 @@ function await()
 
     local nextRouteEntry = getNextRouteEntry()
 
+    if CURR_TRAIN then
+      notifyTrainArrival(CURR_TRAIN.name)
+    end
+
     if not CURR_TRAIN then
       print("> Unknown Train arrived!")
       goToFallbackDestination()
@@ -257,7 +261,24 @@ function goToDesination(destination)
     awaitTrainDeparture()
   end
 
+  notifyTrainDeparture(CURR_TRAIN.name)
   print("> Train departed\n")
+end
+
+function notifyTrainArrival(trainName)
+  modem.transmit(channel, channel, {
+    type = "/trains/post/train-arrived",
+    trainName = trainName,
+    stationName = stationName
+  })
+end
+
+function notifyTrainDeparture(trainName)
+  modem.transmit(channel, channel, {
+    type = "/trains/post/train-departed",
+    trainName = trainName,
+    stationName = stationName
+  })
 end
 
 setup.utilsWrapper(start, modem, channel)

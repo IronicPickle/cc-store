@@ -135,19 +135,31 @@ function M.joinOrCreate(channel, isHost, device, onChange)
 
 end
 
-function M.await(type)
-  while(true) do
-    local event, p1, p2, p3, p4, p5 = os.pullEvent()
-    
-    local isModemMessage = (event == "modem_message")
-    
-    if(isModemMessage) then
-      local body = p4
-      if(not type or body.type == type) then
-        return body
+function M.await(type, timeout)
+  parallel.waitForAny(function ()
+    while true do
+      local event, p1, p2, p3, p4, p5 = os.pullEvent()
+      
+      local isModemMessage = (event == "modem_message")
+      
+      if(isModemMessage) then
+        local body = p4
+        if(not type or body.type == type) then
+          return body
+        end
       end
     end
-  end
+  end, function ()
+    os.sleep(timeout or 5)
+  end)
+end
+
+function M.transmit(modem, channel, body, timeout)
+  parallel.waitForAny(function ()
+    modem.transmit(channel, channel, body)
+  end, function ()
+    os.sleep(timeout or 5)
+  end)
 end
 
 return M
