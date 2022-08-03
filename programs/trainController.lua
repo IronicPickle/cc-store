@@ -39,7 +39,6 @@ local winMain = setup.setupWindow(
     monitor, 1, 7, monitor.x, (monitor.y - (6 + 6)) 
 )
 
-
 -- Setup
 local STATIONS = {}
 local TRAINS = stateHandler.getState("trains") or {}
@@ -83,6 +82,24 @@ function awaitNetwork()
         type = "/trains/get/fallback-station-res/" .. body.stationName,
         station = station
       })
+    elseif body.type == "/trains/get/station-current-train" then
+      local train = utils.findInTable(TRAINS, function (train)
+        return train.currentStationName == body.stationName
+      end)
+      os.sleep(0.25)
+      modem.transmit(channel, channel, {
+        type = "/trains/get/station-current-train-res/" .. body.stationName,
+        train = train
+      })
+    elseif body.type == "/trains/get/station-next-trains" then
+      local trains = utils.filterTable(TRAINS, function (train)
+        return train.nextStationName == body.stationName
+      end)
+      os.sleep(0.25)
+      modem.transmit(channel, channel, {
+        type = "/trains/get/station-next-trains-res/" .. body.stationName,
+        trains = trains
+      })
     elseif body.type == "/trains/post/train-arrived" then
       trainArrived(body.trainName, body.stationName)
     elseif body.type == "/trains/post/train-departed" then
@@ -91,13 +108,91 @@ function awaitNetwork()
   end
 end
 
+function getRouteEntry(train, stationName)
+  if not train or not train.schedule.route then return false end
+  local route = train.schedule.route
+
+  return utils.findInTable(route, function (entry)
+    return entry.stationName == stationName
+  end)
+end
+
+function getNextRouteEntry(train, stationName)
+  if not train or not train.schedule.route then return false end
+  local route = train.schedule.route
+
+  local _, i = getRouteEntry(train, stationName)
+  if not i then return nil end
+
+  if i == utils.tableLength(route) then
+    i = 1
+  else
+    i = i + 1
+  end
+  return route[i], i
+end
+
+function getTrainFromState(trainName)
+  local train, i = utils.findInTable(TRAINS, function (train)
+    return train.name == trainName
+  end)
+
+  return train, i
+end
+
+function updateTrainsCurrentStation(trainName, stationName)
+  local train, i = getTrainFromState(trainName)
+  if not train then
+    print("> Could state of " .. trainName .. ". Train not found in state.")
+    return
+  end
+  
+  TRAINS[i].currentStationName = stationName
+  stateHandler.updateState("trains", TRAINS)
+end
+
+function updateTrainsNextStation(trainName, stationName)
+  local train, i = getTrainFromState(trainName)
+  if not train then
+    print("> Could state of " .. trainName .. ". Train not found in state.")
+    return
+  end
+  
+  local nextRouteEntry = getNextRouteEntry(train, stationName)
+
+  if not nextRouteEntry then
+    print("> Could not update next station of " .. trainName .. ". Next station in route not found.")
+    return
+  end
+
+  TRAINS[i].nextStationName = nextRouteEntry.stationName
+  stateHandler.updateState("trains", TRAINS)
+
+  return nextRouteEntry.stationName
+end
+
 function trainArrived(trainName, stationName)
-  print("> " .. trainName .. " arrived at " .. stationName .. ".")
+  print("<=> " .. trainName .. " arrived at " .. stationName .. ".")
+  
+  updateTrainsCurrentStation(trainName, stationName)
+  local nextStationName = updateTrainsNextStation(trainName, stationName)
+
+  modem.transmit(channel, channel, {
+    type = "/trains/post/trains-state-update"
+  })
+  print("<#> Next station: " .. nextStationName .. "\n")
 end
 
 function trainDeparted(trainName, stationName)
+  print("<=> " .. trainName .. " departed from " .. stationName .. ".")
   
-  print("> " .. trainName .. " departed from " .. stationName .. ".")
+  updateTrainsCurrentStation(trainName, nil)
+  local nextStationName = updateTrainsNextStation(trainName, stationName)
+
+  modem.transmit(channel, channel, {
+    type = "/trains/post/trains-state-update"
+  })
+  print("<#> Next station: " .. nextStationName .. "\n")
 end
 
 function drawAll()
