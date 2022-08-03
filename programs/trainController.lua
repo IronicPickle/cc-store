@@ -115,7 +115,7 @@ function getRouteEntry(train, stationName)
 end
 
 function getNextRouteEntry(train, stationName)
-  if not train or not train.schedule.route then return false end
+  if not train or not train.schedule or not train.schedule.route then return false end
   local route = train.schedule.route
 
   local _, i = getRouteEntry(train, stationName)
@@ -178,6 +178,7 @@ function trainArrived(trainName, stationName)
     type = "/trains/post/trains-state-update",
     trains = TRAINS
   })
+  if not nextStationName then return end
   print("<#> Next station: " .. nextStationName .. "\n")
 end
 
@@ -191,6 +192,7 @@ function trainDeparted(trainName, stationName)
     type = "/trains/post/trains-state-update",
     trains = TRAINS
   })
+  if not nextStationName then return end
   print("<#> Next station: " .. nextStationName .. "\n")
 end
 

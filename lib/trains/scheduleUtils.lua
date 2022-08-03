@@ -223,7 +223,7 @@ function drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
     elseif action == "edit" then
       drawEditRouteEntry(output, stations, route, entryIndex)
     elseif action == "delete" then
-      drawDeleteRouteEntry(output, route, entryIndex)
+      drawDeleteRouteEntry(output, stations, route, entryIndex)
     elseif action == "edit-name" then
       scheduleName = drawEditScheduleName(output, trains, scheduleName)
     elseif action == "save" then break end
@@ -320,7 +320,7 @@ function drawRoute(output, scheduleName, trainName, route)
   
     parallel.waitForAny(function ()
       entryIndex = nil
-      action = awaitButtonInput(length == 0)
+      action = awaitButtonInput(length <= 1)
     end, unpack(buttons))
   end
 
@@ -391,16 +391,36 @@ function deleteRouteEntry(route, i)
   table.remove(route, i)
 end
 
-function drawDeleteRouteEntry(output, route, i)
+function drawDeleteRouteEntry(output, allStations, route, i)
   local entry = route[i]
 
   local modalBody, awaitButtonInput = createModal(output, "Delete a Route Entry", colors.black, colors.white, colors.lightGray, nil, "Delete")
 
   fillBackground(modalBody, colors.white)
-  write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
-  write(modalBody, entry.stationName, 0, (modalBody.y / 2) + 2, "center", colors.black)
+  write(modalBody, "Fetching connecting stations...", 0, (modalBody.y / 2) - 1, "center", colors.black)
 
-  local action = awaitButtonInput()
+  local prevRouteEntry = getPrevRouteEntryByIndex(route, i)
+  local nextRouteEntry = getNextRouteEntryByIndex(route, i)
+  local availableStations = getAvailableStations(prevRouteEntry and prevRouteEntry.stationName, allStations)
+  local canConnect = not nextRouteEntry
+  or prevRouteEntry.stationName == nextRouteEntry.stationName
+  or utils.findInTable(availableStations, function (station)
+    return station.name == nextRouteEntry.stationName
+  end)
+
+  fillBackground(modalBody, colors.white)
+
+  print(textutils.serialize(prevRouteEntry), textutils.serialize(nextRouteEntry), canConnect)
+
+  if canConnect then
+    write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
+    write(modalBody, entry.stationName, 0, (modalBody.y / 2) + 2, "center", colors.black)
+  else
+    write(modalBody, "You cannot delete " .. entry.stationName .. "!", 0, (modalBody.y / 2) - 1, "center", colors.black)
+    write(modalBody, prevRouteEntry.stationName .. " cannot connect to " .. nextRouteEntry.stationName, 0, (modalBody.y / 2) + 2, "center", colors.black)
+  end
+
+  local action = awaitButtonInput(not canConnect)
 
   if action == "submit" then
     deleteRouteEntry(route, i)
@@ -408,6 +428,16 @@ function drawDeleteRouteEntry(output, route, i)
 end
 
 -- Route Utils
+
+function getPrevRouteEntryByIndex(route, routeIndex)
+  local prevRouteEntryIndex = routeIndex == 1 and utils.tableLength(route) or routeIndex - 1
+  return route[prevRouteEntryIndex]
+end
+
+function getNextRouteEntryByIndex(route, routeIndex)
+  local nextRouteEntryIndex = routeIndex == utils.tableLength(route) and 1 or routeIndex + 1
+  return route[nextRouteEntryIndex]
+end
 
 function getAvailableStations(stationName, allStations)
   if not stationName then return allStations end
@@ -441,13 +471,12 @@ function drawSelectStation(output, allStations, route, routeIndex, prevStationNa
   local action = nil
   local stationName = prevStationName or nil
 
-  local lastRouteEntryIndex = routeIndex == 1 and utils.tableLength(route) or routeIndex - 1
-  local lastRouteEntry = route[lastRouteEntryIndex]
+  local prevRouteEntry = getPrevRouteEntryByIndex(route, routeIndex)
   
   fillBackground(modalBody, colors.white)
   write(output, "Fetching connecting stations...", 0, 7, "center", colors.black, colors.white)
 
-  local stations = getAvailableStations(lastRouteEntry and lastRouteEntry.stationName, allStations)
+  local stations = getAvailableStations(prevRouteEntry and prevRouteEntry.stationName, allStations)
   local filteredStations = utils.filterTable(stations, function (station)
     return utils.findInTable(route, function (entry)
       return entry.stationName == station.name
