@@ -417,8 +417,9 @@ function getAvailableStations(stationName, allStations)
   })
 
   local body = network.await("/trains/get/station-destinations-res/" .. stationName)
+  if not body then return {} end
+  
   local destinations = body.destinations
-
   if not destinations then return {} end
 
   local stations = {}

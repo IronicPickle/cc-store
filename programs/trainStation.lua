@@ -60,15 +60,17 @@ end
 function awaitNetwork()
   waitForNetwork()
   while true do
-    local body = network.await()
-  
-    if(body.type == "/trains/get/station-destinations/" .. stationName) then
-      local destinations = getDestinations()
-      os.sleep(0.25)
-      modem.transmit(channel, channel, {
-        type = "/trains/get/station-destinations-res/" .. stationName,
-        destinations = destinations
-      })
+    local body = network.await(nil, false)
+
+    if body then
+      if body.type == "/trains/get/station-destinations/" .. stationName then
+        local destinations = getDestinations()
+        os.sleep(0.25)
+        modem.transmit(channel, channel, {
+          type = "/trains/get/station-destinations-res/" .. stationName,
+          destinations = destinations
+        })
+      end
     end
   end
 end
@@ -163,22 +165,32 @@ function awaitTrain()
 end
 
 function getFallbackStation()
-  modem.transmit(channel, channel, {
-    type = "/trains/get/fallback-station"
-  })
 
-  local body = network.await("/trains/get/fallback-station-res")
+  local body = nil
+  while not body do
+    modem.transmit(channel, channel, {
+      type = "/trains/get/fallback-station"
+    })
+
+    body = network.await("/trains/get/fallback-station-res")
+  end
+
   return body.station
 end
 
 function getTrainInfo(trainName)
-  modem.transmit(channel, channel, {
-    type = "/trains/get/train",
-    trainName = trainName
-  })
 
-  local body = network.await("/trains/get/train-res")
-  return body.train
+  local body = nil
+  while not body do
+    modem.transmit(channel, channel, {
+      type = "/trains/get/train",
+      trainName = trainName
+    })
+    
+    body = network.await("/trains/get/train-res")
+  end
+
+  return body and body.train or nil
 end
 
 function getCurrentRouteEntry()

@@ -138,7 +138,9 @@ end
 function M.await(type, timeout)
   local body = nil
 
-  parallel.waitForAny(function ()
+  local funcs = {}
+
+  table.insert(funcs, function ()
     while true do
       local event, p1, p2, p3, p4, p5 = os.pullEvent()
       
@@ -151,9 +153,15 @@ function M.await(type, timeout)
         end
       end
     end
-  end, function ()
-    os.sleep(timeout or 5)
   end)
+
+  if timeout ~= false then
+    table.insert(funcs, function ()
+      os.sleep(timeout or 5)
+    end)
+  end
+
+  parallel.waitForAny(table.unpack(funcs))
 
   return body
 end
