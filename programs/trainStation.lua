@@ -186,11 +186,11 @@ function getTrainInfo(trainName)
       type = "/trains/get/train",
       trainName = trainName
     })
-    
+
     body = network.await("/trains/get/train-res")
   end
 
-  return body and body.train or nil
+  return body.train
 end
 
 function getCurrentRouteEntry()
