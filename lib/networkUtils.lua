@@ -149,14 +149,14 @@ function M.await(type, timeout)
       
       if(isModemMessage) then
         local body = p4
+
         if(not type or body.type == type) then
           returnBody = body
+          return
         end
       end
     end
   end)
-
-  
 
   if timeout ~= false then
     table.insert(funcs, function ()
