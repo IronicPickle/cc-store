@@ -275,7 +275,7 @@ function goToDesination(destination)
     awaitTrainDeparture()
   end
 
-  notifyTrainDeparture(CURR_TRAIN.name)
+  if CURR_TRAIN.name then notifyTrainDeparture(CURR_TRAIN.name) end
   print("> Train departed\n")
 end
 
