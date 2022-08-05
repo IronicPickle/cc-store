@@ -154,7 +154,7 @@ function awaitTrain()
     if checkIsTrainAtStation() then
       print("> Detected train at station")
       local trainName = readTransponder()
-      CURR_TRAIN = getTrainInfo(trainName)
+      CURR_TRAIN = trainName and getTrainInfo(trainName) or nil
       break
     end
 
