@@ -281,6 +281,7 @@ function drawRoute(output, scheduleName, trainName, route, allStations)
 
     fillBackground(modalBody, colors.white)
 
+    write(modalBody, "Checking route validity...", 0, 4, "center", colors.black, colors.white)
     local routeIsValid = checkRouteIsValid(route, allStations)
 
     local buttons = {}
