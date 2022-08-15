@@ -419,7 +419,7 @@ function drawDeleteRouteEntry(output, route, i)
   write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
   write(modalBody, entry.stationName, 0, (modalBody.y / 2) + 2, "center", colors.black)
 
-  local action = awaitButtonInput(not canConnect)
+  local action = awaitButtonInput()
 
   if action == "submit" then
     deleteRouteEntry(route, i)
