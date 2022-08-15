@@ -140,7 +140,7 @@ end
 function updateTrainsCurrentStation(trainName, stationName)
   local train, i = getTrainFromState(trainName)
   if not train then
-    print("> Could state of " .. trainName .. ". Train not found in state.")
+    -- print("> Could not update next station of " .. trainName .. ". Train not found in state.")
     return
   end
   
@@ -151,14 +151,14 @@ end
 function updateTrainsNextStation(trainName, stationName)
   local train, i = getTrainFromState(trainName)
   if not train then
-    print("> Could state of " .. trainName .. ". Train not found in state.")
+    -- print("> Could not update next station of " .. trainName .. ". Train not found in state.")
     return
   end
   
   local nextRouteEntry = getNextRouteEntry(train, stationName)
 
   if not nextRouteEntry then
-    print("> Could not update next station of " .. trainName .. ". Next station in route not found.")
+    -- print("> Could not update next station of " .. trainName .. ". Next station in route not found.")
     return
   end
 
@@ -169,7 +169,7 @@ function updateTrainsNextStation(trainName, stationName)
 end
 
 function trainArrived(trainName, stationName)
-  print("<=> " .. trainName .. " arrived at " .. stationName .. ".")
+  -- print("<=> " .. trainName .. " arrived at " .. stationName .. ".")
   
   updateTrainsCurrentStation(trainName, stationName)
   local nextStationName = updateTrainsNextStation(trainName, stationName)
@@ -179,11 +179,11 @@ function trainArrived(trainName, stationName)
     trains = TRAINS
   })
   if not nextStationName then return end
-  print("<#> Next station: " .. nextStationName .. "\n")
+  -- print("<#> Next station: " .. nextStationName .. "\n")
 end
 
 function trainDeparted(trainName, stationName)
-  print("<=> " .. trainName .. " departed from " .. stationName .. ".")
+  -- print("<=> " .. trainName .. " departed from " .. stationName .. ".")
   
   updateTrainsCurrentStation(trainName, nil)
   local nextStationName = updateTrainsNextStation(trainName, stationName)
@@ -193,7 +193,7 @@ function trainDeparted(trainName, stationName)
     trains = TRAINS
   })
   if not nextStationName then return end
-  print("<#> Next station: " .. nextStationName .. "\n")
+  -- print("<#> Next station: " .. nextStationName .. "\n")
 end
 
 function drawAll()
