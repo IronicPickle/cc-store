@@ -215,7 +215,7 @@ function drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
   while true do
     local entryIndex
 
-    action, entryIndex = drawRoute(output, scheduleName, trainName, route)
+    action, entryIndex = drawRoute(output, scheduleName, trainName, route, stations)
     if action == "cancel" then break end
 
     if action == "add" then
@@ -223,7 +223,7 @@ function drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
     elseif action == "edit" then
       drawEditRouteEntry(output, stations, route, entryIndex)
     elseif action == "delete" then
-      drawDeleteRouteEntry(output, stations, route, entryIndex)
+      drawDeleteRouteEntry(output, route, entryIndex)
     elseif action == "edit-name" then
       scheduleName = drawEditScheduleName(output, trains, scheduleName)
     elseif action == "save" then break end
@@ -232,7 +232,20 @@ function drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
   return action, route, scheduleName
 end
 
-function drawRoute(output, scheduleName, trainName, route)
+function checkRouteIsValid(route, allStations)
+  for entry, i in ipairs(route) do
+    local nextRouteEntry = getNextRouteEntryByIndex(route, i)
+    if not nextRouteEntry then return false end
+    local availableStations = getAvailableStations(entry.stationName, allStations)
+    local canConnect = utils.findInTable(availableStations, function (station)
+      return station.name == nextRouteEntry.stationName
+    end)
+    if not canConnect then return false end
+  end
+  return true
+end
+
+function drawRoute(output, scheduleName, trainName, route, allStations)
   local entryIndex = nil
   local action = nil
 
@@ -267,6 +280,8 @@ function drawRoute(output, scheduleName, trainName, route)
     local modalBody = createModal(output, "Schedule: "..scheduleName.." for "..trainName, colors.black, colors.white, colors.lightGray, nil, "Continue")
 
     fillBackground(modalBody, colors.white)
+
+    local routeIsValid = checkRouteIsValid(route, allStations)
 
     local buttons = {}
 
@@ -320,7 +335,7 @@ function drawRoute(output, scheduleName, trainName, route)
   
     parallel.waitForAny(function ()
       entryIndex = nil
-      action = awaitButtonInput(length <= 1)
+      action = awaitButtonInput(length <= 1 or not routeIsValid)
     end, unpack(buttons))
   end
 
@@ -391,7 +406,7 @@ function deleteRouteEntry(route, i)
   table.remove(route, i)
 end
 
-function drawDeleteRouteEntry(output, allStations, route, i)
+function drawDeleteRouteEntry(output, route, i)
   local entry = route[i]
 
   local modalBody, awaitButtonInput = createModal(output, "Delete a Route Entry", colors.black, colors.white, colors.lightGray, nil, "Delete")
@@ -399,26 +414,10 @@ function drawDeleteRouteEntry(output, allStations, route, i)
   fillBackground(modalBody, colors.white)
   write(modalBody, "Fetching connecting stations...", 0, (modalBody.y / 2) - 1, "center", colors.black)
 
-  local prevRouteEntry = getPrevRouteEntryByIndex(route, i)
-  local nextRouteEntry = getNextRouteEntryByIndex(route, i)
-  local availableStations = getAvailableStations(prevRouteEntry and prevRouteEntry.stationName, allStations)
-  local canConnect = not nextRouteEntry
-  or prevRouteEntry.stationName == nextRouteEntry.stationName
-  or utils.findInTable(availableStations, function (station)
-    return station.name == nextRouteEntry.stationName
-  end)
-
   fillBackground(modalBody, colors.white)
 
-  print(textutils.serialize(prevRouteEntry), textutils.serialize(nextRouteEntry), canConnect)
-
-  if canConnect then
-    write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
-    write(modalBody, entry.stationName, 0, (modalBody.y / 2) + 2, "center", colors.black)
-  else
-    write(modalBody, "You cannot delete " .. entry.stationName .. "!", 0, (modalBody.y / 2) - 1, "center", colors.black)
-    write(modalBody, prevRouteEntry.stationName .. " cannot connect to " .. nextRouteEntry.stationName, 0, (modalBody.y / 2) + 2, "center", colors.black)
-  end
+  write(modalBody, "Are you sure you want to delete:", 0, (modalBody.y / 2) - 1, "center", colors.black)
+  write(modalBody, entry.stationName, 0, (modalBody.y / 2) + 2, "center", colors.black)
 
   local action = awaitButtonInput(not canConnect)
 
