@@ -233,7 +233,7 @@ function drawRouteTrain(output, stations, scheduleName, trainName, trains, i)
 end
 
 function checkRouteIsValid(route, allStations)
-  for entry, i in ipairs(route) do
+  for i, entry in ipairs(route) do
     local nextRouteEntry = getNextRouteEntryByIndex(route, i)
     if not nextRouteEntry then return false end
     local availableStations = getAvailableStations(entry.stationName, allStations)
