@@ -278,10 +278,11 @@ function drawRoute(output, scheduleName, trainName, route, allStations)
 
   while action == nil do
     local modalBody = createModal(output, "Schedule: "..scheduleName.." for "..trainName, colors.black, colors.white, colors.lightGray, nil, "Continue")
-
     fillBackground(modalBody, colors.white)
 
     write(modalBody, "Checking route validity...", 0, 4, "center", colors.black, colors.white)
+    fillBackground(modalBody, colors.white)
+
     local routeIsValid = checkRouteIsValid(route, allStations)
 
     local buttons = {}
