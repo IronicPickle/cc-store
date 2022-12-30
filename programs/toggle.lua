@@ -84,10 +84,10 @@ function on()
         for i = 1, 5, 1 do
             if(i % 2 == 0) then
                 rs.setAnalogOutput(redstoneOutput, 0)
-                os.sleep(math.random(1, 5) / 2)
+                os.sleep(math.random(1, 10) / 4)
             else
                 rs.setAnalogOutput(redstoneOutput, 15)
-                os.sleep(math.random() / 2)
+                os.sleep(math.random() / 4)
             end
         end
     else
