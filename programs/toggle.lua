@@ -43,6 +43,7 @@ local winFooter = setup.setupWindow(
 function start()
     print("# Program Started")
     modem.open(channel)
+    math.randomseed(os.time())
     
     drawHeader()
     drawFooter()
@@ -80,7 +81,6 @@ end
 
 function on()
     if(flicker) then
-        math.randomseed(os.time())
         for i = 1, 5, 1 do
             if(i % 2 == 0) then
                 rs.setAnalogOutput(redstoneOutput, 0)
