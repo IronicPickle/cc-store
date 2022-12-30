@@ -1,4 +1,4 @@
---$ARGS|Channel (30)|Redstone Output (right)|Name (Unnamed)|$ARGS
+--$ARGS|Channel (30)|Redstone Output Type [switch/button] (switch)|Redstone Output (right)|Name (Unnamed)|$ARGS
 
 
 -- Libraries
@@ -12,8 +12,9 @@ local utils = require("/lua/lib/utils")
 -- Args
 local args = { ... }
 local channel = tonumber(args[1]) or 30
-local redstoneOutput = args[2] or "right"
-local name = utils.urlDecode(args[3] or "Unnamed")
+local outputType = args[2] or "switch"
+local redstoneOutput = args[3] or "right"
+local name = utils.urlDecode(args[4] or "Unnamed")
 
 -- Peripherals
 local wrappedPers = setup.getPers({
@@ -77,8 +78,18 @@ function await()
     end
 end
 
+function outputToRedstone(rsState)
+    if(outputType == "switch") then
+        rs.setAnalogOutput(redstoneOutput, rsState and 15 or 0)
+    else
+        rs.setAnalogOutput(redstoneOutput, 15)
+        os.sleep(0.5)
+        rs.setAnalogOutput(redstoneOutput, 0)
+    end
+end
+
 function on()
-    rs.setAnalogOutput(redstoneOutput, 15)
+    outputToRedstone(true)
     if(speaker) then
         speaker.playSound(
             "minecraft:block.lever.click",
@@ -92,7 +103,7 @@ function on()
 end
 
 function off()
-    rs.setAnalogOutput(redstoneOutput, 0)
+    outputToRedstone(false)
     if(speaker) then
         speaker.playSound(
             "minecraft:block.lever.click",

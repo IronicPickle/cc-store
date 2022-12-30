@@ -80,12 +80,12 @@ function await()
     end
 end
 
-function outputToRedstone(doorState)
+function outputToRedstone(rsState)
     if(outputType == "switch") then
-        rs.setAnalogOutput(redstoneOutput, doorState == "open" and 15 or 0)
+        rs.setAnalogOutput(redstoneOutput, rsState and 15 or 0)
     else
         rs.setAnalogOutput(redstoneOutput, 15)
-        os.sleep(0.1)
+        os.sleep(0.5)
         rs.setAnalogOutput(redstoneOutput, 0)
     end
 end
@@ -93,7 +93,7 @@ end
 function open()
     parallel.waitForAny(await,
         function()
-            outputToRedstone("open")
+            outputToRedstone(true)
             if(speaker) then
                 speaker.playSound(
                     "minecraft:entity.experience_orb.pickup",
@@ -122,7 +122,7 @@ function open()
 end
 
 function close()
-    outputToRedstone("close")
+    outputToRedstone(false)
     if(speaker) then
         speaker.playSound(
             "minecraft:entity.experience_orb.pickup",
