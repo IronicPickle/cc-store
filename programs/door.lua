@@ -1,5 +1,13 @@
 --$ARGS|Channel (20)|Delay (15)|Open Delay (3)|Close Delay (3)|Redstone Output Type [switch/button] (switch)|Redstone Output (right)|Name (Unnamed)|$ARGS
 
+-- Libraries
+local setup = require("/lua/lib/setupUtils")
+local monUtils = require("/lua/lib/monitorUtils")
+local write = monUtils.write
+local drawBox = monUtils.drawBox
+local stateHandler = require("/lua/lib/stateHandler")
+local utils = require("/lua/lib/utils")
+
 -- Args
 local args = { ... }
 local channel = tonumber(args[1]) or 20
@@ -8,14 +16,7 @@ local openDelay = tonumber(args[3]) or 3
 local closeDelay = tonumber(args[4]) or 3
 local outputType = args[5] or "switch"
 local redstoneOutput = args[6] or "right"
-local name = args[7] or "Unnamed"
-
--- Libraries
-local setup = require("/lua/lib/setupUtils")
-local monUtils = require("/lua/lib/monitorUtils")
-local write = monUtils.write
-local drawBox = monUtils.drawBox
-local stateHandler = require("/lua/lib/stateHandler")
+local name = utils.urlDecode(args[7] or "Unnamed")
 
 -- Peripherals
 local wrappedPers = setup.getPers({

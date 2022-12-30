@@ -1,10 +1,5 @@
 --$ARGS|Channel (30)|Redstone Output (right)|Name (Unnamed)|$ARGS
 
--- Args
-local args = { ... }
-local channel = tonumber(args[1]) or 30
-local redstoneOutput = args[2] or "right"
-local name = args[3] or "Unnamed"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
@@ -12,6 +7,13 @@ local monUtils = require("/lua/lib/monitorUtils")
 local write = monUtils.write
 local drawBox = monUtils.drawBox
 local stateHandler = require("/lua/lib/stateHandler")
+local utils = require("/lua/lib/utils")
+
+-- Args
+local args = { ... }
+local channel = tonumber(args[1]) or 30
+local redstoneOutput = args[2] or "right"
+local name = utils.urlDecode(args[3] or "Unnamed")
 
 -- Peripherals
 local wrappedPers = setup.getPers({

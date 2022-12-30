@@ -1,14 +1,5 @@
 --$ARGS|Channel (10)|Floor Number (1)|Floor Name (Unnamed)|Destination Redstone Output (right)|Direction Redstone Output (left)|Moving Redstone Output (front)|Is Host (false)|$ARGS
 
--- Args
-local args = { ... }
-local channel = tonumber(args[1]) or 10
-local floorNum = tonumber(args[2]) or 1
-local floorName = args[3] or "Unnamed"
-local destinationRedstoneOutput = args[4] or "right"
-local directionRedstoneOutput = args[5] or "left"
-local movingRedstoneOutput = args[6] or "front"
-local isHost = args[7] == "true"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
@@ -18,6 +9,16 @@ local drawBox = monUtils.drawBox
 local stateHandler = require("/lua/lib/stateHandler")
 local network = require("/lua/lib/networkUtils")
 local utils = require("/lua/lib/utils")
+
+-- Args
+local args = { ... }
+local channel = tonumber(args[1]) or 10
+local floorNum = tonumber(args[2]) or 1
+local floorName = utils.urlDecode(args[3] or "Unnamed")
+local destinationRedstoneOutput = args[4] or "right"
+local directionRedstoneOutput = args[5] or "left"
+local movingRedstoneOutput = args[6] or "front"
+local isHost = args[7] == "true"
 
 -- Peripherals
 local wrappedPers = setup.getPers({
