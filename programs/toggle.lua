@@ -1,4 +1,4 @@
---$ARGS|Channel (30)|Redstone Output (right)|Name (Unnamed)|Flicker On (false)|$ARGS
+--$ARGS|Channel (30)|Redstone Output (right)|Name (Unnamed)|$ARGS
 
 
 -- Libraries
@@ -14,7 +14,6 @@ local args = { ... }
 local channel = tonumber(args[1]) or 30
 local redstoneOutput = args[2] or "right"
 local name = utils.urlDecode(args[3] or "Unnamed")
-local flicker = args[4] or false
 
 -- Peripherals
 local wrappedPers = setup.getPers({
@@ -43,7 +42,6 @@ local winFooter = setup.setupWindow(
 function start()
     print("# Program Started")
     modem.open(channel)
-    math.randomseed(os.time())
     
     drawHeader()
     drawFooter()
@@ -80,20 +78,7 @@ function await()
 end
 
 function on()
-    if(flicker) then
-        for i = 1, 9, 1 do
-            if(i % 2 == 0) then
-                rs.setAnalogOutput(redstoneOutput, 0)
-                os.sleep(math.random(1, 8) / 4)
-            else
-                rs.setAnalogOutput(redstoneOutput, 15)
-                os.sleep(math.random() / 4)
-            end
-        end
-    else
-        rs.setAnalogOutput(redstoneOutput, 15)
-    end
-
+    rs.setAnalogOutput(redstoneOutput, 15)
     if(speaker) then
         speaker.playSound(
             "minecraft:block.lever.click",
