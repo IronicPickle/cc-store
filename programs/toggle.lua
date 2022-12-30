@@ -81,10 +81,10 @@ end
 
 function on()
     if(flicker) then
-        for i = 1, 5, 1 do
+        for i = 1, 9, 1 do
             if(i % 2 == 0) then
                 rs.setAnalogOutput(redstoneOutput, 0)
-                os.sleep(math.random(1, 10) / 4)
+                os.sleep(math.random(1, 8) / 4)
             else
                 rs.setAnalogOutput(redstoneOutput, 15)
                 os.sleep(math.random() / 4)
