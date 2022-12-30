@@ -1,4 +1,4 @@
---$ARGS|Channel (20)|Delay (15)|Open Delay (3)|Close Delay (3)|Redstone Output (right)|Name (Unnamed)|$ARGS
+--$ARGS|Channel (20)|Delay (15)|Open Delay (3)|Close Delay (3)|Redstone Output Type [switch|button] (switch)|Redstone Output (right)|Name (Unnamed)|$ARGS
 
 -- Args
 local args = { ... }
@@ -6,8 +6,9 @@ local channel = tonumber(args[1]) or 20
 local delay = tonumber(args[2]) or 15
 local openDelay = tonumber(args[3]) or 3
 local closeDelay = tonumber(args[4]) or 3
-local redstoneOutput = args[5] or "right"
-local name = args[6] or "Unnamed"
+local outputType = args[5] or "switch"
+local redstoneOutput = args[6] or "right"
+local name = args[7] or "Unnamed"
 
 -- Libraries
 local setup = require("/lua/lib/setupUtils")
@@ -78,10 +79,20 @@ function await()
     end
 end
 
+function outputToRedstone(doorState)
+    if(outputType == "switch") then
+        rs.setAnalogOutput(redstoneOutput, doorState == "open" and 15 or 0)
+    else
+        rs.setAnalogOutput(redstoneOutput, 15)
+        os.sleep(0.1)
+        rs.setAnalogOutput(redstoneOutput, 0)
+    end
+end
+
 function open()
     parallel.waitForAny(await,
         function()
-            rs.setAnalogOutput(redstoneOutput, 15)
+            outputToRedstone("open")
             if(speaker) then
                 speaker.playSound(
                     "minecraft:entity.experience_orb.pickup",
@@ -110,7 +121,7 @@ function open()
 end
 
 function close()
-    rs.setAnalogOutput(redstoneOutput, 0)
+    outputToRedstone("close")
     if(speaker) then
         speaker.playSound(
             "minecraft:entity.experience_orb.pickup",
