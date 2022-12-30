@@ -81,10 +81,10 @@ end
 function on()
     if(flicker) then
         math.randomseed(os.time())
-        for i = 1, 6, 1 do
-            if(i % 2 == 1) then os.sleep(math.random())
-            else os.sleep(math.random(1, 3)) end
-            rs.setAnalogOutput(redstoneOutput, i % 2 == 0 and 15 or 0)
+        for i = 1, 5, 1 do
+            if(i % 2 == 0) then os.sleep(math.random(1, 3) / 2)
+            else os.sleep(math.random()) end
+            rs.setAnalogOutput(redstoneOutput, i % 2 == 0 and 0 or 15)
         end
     else
         rs.setAnalogOutput(redstoneOutput, 15)
