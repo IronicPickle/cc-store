@@ -1,4 +1,4 @@
---$ARGS|Channel (30)|Redstone Output (right)|Name (Unnamed)|$ARGS
+--$ARGS|Channel (30)|Redstone Output (right)|Name (Unnamed)|Flicker On (false)|$ARGS
 
 
 -- Libraries
@@ -14,6 +14,7 @@ local args = { ... }
 local channel = tonumber(args[1]) or 30
 local redstoneOutput = args[2] or "right"
 local name = utils.urlDecode(args[3] or "Unnamed")
+local flicker = args[4] or false
 
 -- Peripherals
 local wrappedPers = setup.getPers({
@@ -78,7 +79,16 @@ function await()
 end
 
 function on()
-    rs.setAnalogOutput(redstoneOutput, 15)
+    if(flicker) then
+        for i = 1, 6, 1 do
+            math.randomseed(os.time())
+            os.sleep(math.random(1, 5))
+            rs.setAnalogOutput(redstoneOutput, i % 2 == 0 and 15 or 0)
+        end
+    else
+        rs.setAnalogOutput(redstoneOutput, 15)
+    end
+
     if(speaker) then
         speaker.playSound(
             "minecraft:block.lever.click",
