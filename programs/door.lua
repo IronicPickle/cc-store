@@ -49,13 +49,16 @@ function start()
     print("# Program Started")
     modem.open(channel)
     
-    await()
+    parallel.waitForAny(await, function ()
+        if(state == "open" or state == "opening") then
+            open(true)
+        else
+            close(true)
+        end
+    end)
 end
 
 function await()
-    drawHeader()
-    drawFooter()
-    drawMain()
     while(true) do
         local event, p1, p2, p3, p4, p5 = os.pullEvent()
         
@@ -94,10 +97,10 @@ function outputToRedstone(rsState)
     end
 end
 
-function open()
+function open(isInitial)
     parallel.waitForAny(await,
         function()
-            outputToRedstone(true)
+            if(not isInitial or outputType == "switch") then outputToRedstone(true) end
             if(speaker) then
                 speaker.playSound(
                     "minecraft:entity.experience_orb.pickup",
@@ -125,8 +128,8 @@ function open()
     close()
 end
 
-function close()
-    outputToRedstone(false)
+function close(isInitial)
+    if(not isInitial or outputType == "switch") then outputToRedstone(false) end
     if(speaker) then
         speaker.playSound(
             "minecraft:entity.experience_orb.pickup",
