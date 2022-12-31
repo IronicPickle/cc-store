@@ -59,6 +59,8 @@ function await()
         local isTouch = (event == "monitor_touch")
         
         local isModemMessage = (event == "modem_message")
+
+        local isRedstone = (event == "redstone")
         
         if(isTouch) then
             modem.transmit(channel, channel,
@@ -76,6 +78,9 @@ function await()
             elseif(body.type == "closed") then
                 open()
             end
+        elseif(isRedstone) then
+            print("redstone")
+            print(p1)
         end
     end
 end
