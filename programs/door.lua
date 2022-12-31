@@ -49,7 +49,7 @@ function start()
     print("# Program Started")
     modem.open(channel)
     
-    parallel.waitForAny(await, function ()
+    parallel.waitForAll(await, function ()
         if(state == "open" or state == "opening") then
             open(true)
         else
