@@ -49,18 +49,20 @@ function start()
     print("# Program Started")
     modem.open(channel)
     
-    parallel.waitForAll(close, await)
+    await()
 end
 
 function await()
+    drawHeader()
+    drawFooter()
+    drawMain()
     while(true) do
         local event, p1, p2, p3, p4, p5 = os.pullEvent()
         
         local isTouch = (event == "monitor_touch")
         
         local isModemMessage = (event == "modem_message")
-
-        local isRedstone = (event == "redstone")
+        
         
         if(isTouch) then
             modem.transmit(channel, channel,
@@ -78,9 +80,6 @@ function await()
             elseif(body.type == "closed") then
                 open()
             end
-        elseif(isRedstone) then
-            print("redstone")
-            print(p1)
         end
     end
 end
