@@ -47,7 +47,14 @@ function start()
     drawHeader()
     drawFooter()
     
-    await()
+    
+    parallel.waitForAll(await, function ()
+        if(state == "on") then
+            on(true)
+        else
+            off(true)
+        end
+    end)
 end
 
 function await()
@@ -88,8 +95,8 @@ function outputToRedstone(rsState)
     end
 end
 
-function on()
-    outputToRedstone(true)
+function on(isInitial)
+    if(not isInitial or outputType == "switch") then outputToRedstone(true) end
     if(speaker) then
         speaker.playSound(
             "minecraft:block.lever.click",
@@ -102,8 +109,8 @@ function on()
     drawFooter()
 end
 
-function off()
-    outputToRedstone(false)
+function off(isInitial)
+    if(not isInitial or outputType == "switch") then outputToRedstone(false) end
     if(speaker) then
         speaker.playSound(
             "minecraft:block.lever.click",
