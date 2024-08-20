@@ -132,7 +132,7 @@ function close(isInitial)
     if(not isInitial or outputType == "switch") then outputToRedstone(false) end
     if(speaker) then
         speaker.playSound(
-            "minecraft:item.lodestone_compass.lock,
+            "minecraft:item.lodestone_compass.lock",
             1, 0.5
         )
     end
