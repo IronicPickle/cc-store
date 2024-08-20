@@ -103,7 +103,7 @@ function open(isInitial)
             if(not isInitial or outputType == "switch") then outputToRedstone(true) end
             if(speaker) then
                 speaker.playSound(
-                    "minecraft:entity.experience_orb.pickup",
+                    "minecraft:item.lodestone_compass.lock",
                     1, 0.5
                 )
             end
@@ -132,7 +132,7 @@ function close(isInitial)
     if(not isInitial or outputType == "switch") then outputToRedstone(false) end
     if(speaker) then
         speaker.playSound(
-            "minecraft:entity.experience_orb.pickup",
+            "minecraft:item.lodestone_compass.lock,
             1, 0.5
         )
     end
