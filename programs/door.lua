@@ -104,7 +104,7 @@ function open(isInitial)
             if(speaker) then
                 speaker.playSound(
                     "minecraft:item.lodestone_compass.lock",
-                    1, 0.5
+                    1, 1
                 )
             end
             state = "opening"
