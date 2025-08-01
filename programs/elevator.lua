@@ -267,10 +267,7 @@ function awaitFinish()
         
         local isModemMessage = (event == "modem_message")
 
-        print(isRedstone)
-        print(isTargetFloor)
-        print(floorNum)
-        print(currentFloorIndex)
+        print(isRedstone, isTargetFloor, floorNum, currentFloorIndex)
 
         if(isRedstone and isTargetFloor) then
             modem.transmit(channel, channel,
