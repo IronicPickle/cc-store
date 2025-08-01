@@ -263,10 +263,10 @@ function awaitFinish()
         local event, p1, p2, p3, p4, p5 = os.pullEvent()
         
         local isRedstone = (event == "redstone")
-        local isTargetFloor = floorNum ~= currentFloorIndex
+        local isTargetFloor = floorNum == currentFloorIndex
         
         local isModemMessage = (event == "modem_message")
-        
+
         if(isRedstone and isTargetFloor) then
             modem.transmit(channel, channel,
                 {
