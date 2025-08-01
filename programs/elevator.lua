@@ -258,7 +258,7 @@ function drawMoving()
 end
 
 function awaitFinish()
-    sleep(1)
+    sleep(10)
     while(true) do
         local event, p1, p2, p3, p4, p5 = os.pullEvent()
         
