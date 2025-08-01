@@ -263,7 +263,7 @@ function awaitFinish()
         local event, p1, p2, p3, p4, p5 = os.pullEvent()
         
         local isRedstone = (event == "redstone")
-        local isTargetFloor = floorNum == currentFloorIndex
+        local isTargetFloor = floorNum == floors[currentFloorIndex].floorNum
         
         local isModemMessage = (event == "modem_message")
 
